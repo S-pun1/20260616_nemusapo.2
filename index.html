@@ -8,12 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts (Rounded Sans-serif) -->
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1C:wght@400;700;800;900&display=swap" rel="stylesheet">
-    <!-- Babel for inline TypeScript compile -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
         body {
@@ -25,26 +21,26 @@
         /* スムーズな画面切り替えアニメーション */
         .page {
             display: none;
-            animation: swimIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: swimIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .page.active {
             display: block;
         }
         @keyframes swimIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         /* おやすみモード（さらに深い、静寂な最深海テーマ） */
         .dark-mode {
-            background: linear-gradient(180deg, #040814 0%, #010307 100%) !important;
+            background: linear-gradient(180deg, #030611 0%, #010205 100%) !important;
             color: #94a3b8 !important;
         }
 
         /* クラゲのふわふわ・ゆらゆら浮遊アニメーション */
         @keyframes jellyfishFloat {
             0% { transform: translateY(0px) scale(1); }
-            40% { transform: translateY(-12px) scale(1.02) rotate(1deg); }
+            40% { transform: translateY(-10px) scale(1.02) rotate(1deg); }
             70% { transform: translateY(-2px) scale(0.98) rotate(-1deg); }
             100% { transform: translateY(0px) scale(1); }
         }
@@ -70,21 +66,21 @@
             transform-origin: top center;
         }
 
-        /* 泡のぷくぷくアニメーション（癒し効果） */
+        /* 泡のぷくぷくアニメーション */
         @keyframes bubbleUp {
             0% { transform: translateY(100px) translateX(0); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
             100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
         }
         .bubble {
             position: absolute;
-            background: radial-gradient(circle, rgba(147, 197, 253, 0.4) 0%, rgba(147, 197, 253, 0.05) 70%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: radial-gradient(circle, rgba(147, 197, 253, 0.3) 0%, rgba(147, 197, 253, 0.02) 70%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             pointer-events: none;
             bottom: 0;
-            animation: bubbleUp 12s linear infinite;
+            animation: bubbleUp 10s linear infinite;
         }
 
         /* レベルアップ星屑エフェクト */
@@ -98,13 +94,13 @@
             height: 6px;
             background-color: #7dd3fc;
             box-shadow: 0 0 10px #38bdf8;
-            animation: stardust 3s linear forwards;
+            animation: stardust 2.5s linear forwards;
             z-index: 100;
             border-radius: 50%;
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen transition-colors duration-1000 pb-24 overflow-x-hidden relative">
+<body class="flex flex-col items-center justify-start min-h-screen transition-colors duration-1000 pb-28 overflow-x-hidden relative">
 
     <!-- 癒しの泡エフェクト用コンテナ -->
     <div id="bubble-bg" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
@@ -113,16 +109,17 @@
     <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
 
     <!-- ヘッダー -->
-    <header class="w-full max-w-md bg-slate-900/40 backdrop-blur-xl shadow-lg sticky top-0 z-40 px-5 py-4 flex justify-between items-center rounded-b-[2.5rem] transition-all duration-500 border-b border-cyan-500/10">
+    <header class="w-full max-w-md bg-slate-900/60 backdrop-blur-xl shadow-xl sticky top-0 z-40 px-5 py-4 flex justify-between items-center rounded-b-[2rem] transition-all duration-500 border-b border-cyan-500/20">
         <div class="flex items-center gap-2.5">
-            <div class="bg-cyan-500/20 text-cyan-300 p-2.5 rounded-2xl shadow-inner border border-cyan-500/20 transition-colors duration-500" id="header-logo-container">
-                <i data-lucide="waves" class="w-5 h-5 animate-pulse"></i>
+            <div class="bg-cyan-500/20 text-cyan-300 p-2 rounded-xl shadow-inner border border-cyan-500/20" id="header-logo-container">
+                <!-- 波のSVGアイコン -->
+                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12c0-1.879 1.157-3.487 2.802-4.148l3.86-1.543A4.5 4.5 0 0110.5 6h3a4.5 4.5 0 011.588.29l3.86 1.543c1.645.66 2.802 2.27 2.802 4.148v.75A2.25 2.25 0 0119.5 15h-15a2.25 2.25 0 01-2.25-2.25v-.75z"/></svg>
             </div>
-            <span class="font-black text-xl tracking-wider text-cyan-200 transition-colors duration-500" id="header-title">ネムサポ</span>
+            <span class="font-black text-lg tracking-wider text-cyan-200" id="header-title">ネムサポ</span>
         </div>
-        <div class="flex items-center gap-2 bg-slate-950/50 px-4 py-1.5 rounded-full border border-cyan-500/20 transition-colors duration-500 shadow-sm" id="header-stats">
+        <div class="flex items-center gap-2 bg-slate-950/70 px-3.5 py-1.5 rounded-full border border-cyan-500/30 shadow-sm" id="header-stats">
             <span class="text-xs font-black text-cyan-300">Lv.<span id="char-level" class="text-cyan-100">1</span></span>
-            <div class="w-16 bg-slate-800/80 h-2 rounded-full overflow-hidden">
+            <div class="w-14 bg-slate-800 h-2 rounded-full overflow-hidden">
                 <div id="char-exp-bar" class="bg-gradient-to-r from-cyan-400 to-indigo-400 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
         </div>
@@ -136,27 +133,24 @@
              ============================================== -->
         <section id="page-home" class="page active">
             <!-- キャラのステータスカード -->
-            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 relative overflow-hidden transition-all duration-500 card-container">
+            <div class="bg-slate-900/60 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/20 relative overflow-hidden transition-all duration-500 card-container">
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl opacity-60"></div>
                 
                 <div class="text-center">
-                    <span id="char-state-badge" class="inline-block bg-cyan-950/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/20 transition-all">
+                    <span id="char-state-badge" class="inline-block bg-cyan-950/80 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-md border border-cyan-500/30 transition-all">
                         ゆったり浮遊中 🌊
                     </span>
                     
                     <!-- クラゲキャラクター「ジェリタ」(SVG) -->
-                    <div class="w-48 h-48 mx-auto my-3 flex items-center justify-center relative jelly-float">
+                    <div class="w-44 h-44 mx-auto my-3 flex items-center justify-center relative jelly-float">
                         <svg id="jelly-svg" viewBox="0 0 200 200" class="w-full h-full filter drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
                             <!-- 後ろにうっすら光るオーラ -->
                             <circle cx="100" cy="100" r="50" fill="url(#jellyGlow)" opacity="0.3" />
 
                             <!-- 触手 -->
                             <g>
-                                <!-- 左の触手 -->
                                 <path class="tentacle-left" d="M 85 125 Q 75 145 85 165 T 75 185" fill="none" stroke="#7dd3fc" stroke-width="4.5" stroke-linecap="round" opacity="0.8" />
-                                <!-- 右の触手 -->
                                 <path class="tentacle-right" d="M 115 125 Q 125 145 115 165 T 125 185" fill="none" stroke="#7dd3fc" stroke-width="4.5" stroke-linecap="round" opacity="0.8" />
-                                <!-- 真ん中の触手 -->
                                 <path class="tentacle-mid" d="M 100 130 Q 105 150 95 170 T 100 190" fill="none" stroke="#c084fc" stroke-width="5" stroke-linecap="round" opacity="0.9" />
                             </g>
                             
@@ -181,7 +175,6 @@
                                 <ellipse cx="78" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
                                 <ellipse cx="122" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
                                 <line x1="94" y1="109" x2="106" y2="109" stroke="#082f49" stroke-width="3.5" stroke-linecap="round"/>
-                                <!-- 鉛筆（海草風）を持つ -->
                                 <rect x="130" y="105" width="6" height="18" rx="2.5" transform="rotate(30 130 105)" fill="#10b981" />
                             </g>
 
@@ -205,7 +198,6 @@
                                 <path d="M 94 112 Q 100 108 106 112" stroke="#082f49" stroke-width="2.5" fill="none" stroke-linecap="round" />
                             </g>
 
-                            <!-- グラデーション定義 -->
                             <defs>
                                 <linearGradient id="jellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                                     <stop offset="0%" stop-color="#22d3ee" />
@@ -220,13 +212,13 @@
                         </svg>
                     </div>
 
-                    <h2 class="text-xl font-black text-cyan-100 transition-colors duration-500" id="char-name">ジェリタ</h2>
+                    <h2 class="text-xl font-black text-cyan-100" id="char-name">ジェリタ</h2>
                     <p class="text-[11px] text-cyan-300/80 mt-1 font-bold" id="char-subtext">ゆらゆら泳ぎながら君の睡眠を守るよ</p>
                 </div>
 
                 <!-- 経験値進行バー -->
-                <div class="mt-5 bg-slate-950/40 p-4 rounded-3xl border border-cyan-500/10 transition-colors duration-500" id="exp-container">
-                    <div class="flex justify-between text-xs text-cyan-400 mb-2 font-bold transition-colors duration-500" id="exp-text-container">
+                <div class="mt-5 bg-slate-950/40 p-4 rounded-3xl border border-cyan-500/10" id="exp-container">
+                    <div class="flex justify-between text-xs text-cyan-400 mb-2 font-bold" id="exp-text-container">
                         <span>深海の成長ゲージ</span>
                         <span><span id="current-exp">0</span> / <span id="needed-exp">100</span> EXP</span>
                     </div>
@@ -241,7 +233,8 @@
                 <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-indigo-950/70"></div>
                 <div class="flex gap-3.5 items-start">
                     <div class="bg-indigo-900/60 p-2.5 rounded-2xl flex-shrink-0 shadow-inner text-cyan-300 border border-cyan-500/20">
-                        <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+                        <!-- ひらめきSVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096m8.146 0L15 21m0 0l-.813-5.096M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707"/></svg>
                     </div>
                     <div>
                         <h3 class="font-bold text-xs text-cyan-300 uppercase tracking-wider" id="advice-header">深海のやすらぎヒント</h3>
@@ -253,10 +246,11 @@
             </div>
 
             <!-- アロマ・おすすめ習慣カード -->
-            <div class="mt-5 bg-cyan-950/50 rounded-[2rem] p-5 border border-cyan-500/20 shadow-lg transition-all duration-500" id="aroma-card">
+            <div class="mt-5 bg-cyan-950/50 rounded-[2rem] p-5 border border-cyan-500/20 shadow-lg" id="aroma-card">
                 <div class="flex items-start gap-3.5">
                     <div class="bg-cyan-900/50 p-3 rounded-2xl text-cyan-300 shadow-sm border border-cyan-500/20" id="aroma-icon-container">
-                        <i data-lucide="droplet" class="w-5 h-5"></i>
+                        <!-- 水滴のSVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>
                     </div>
                     <div class="flex-grow">
                         <span class="text-[9px] text-cyan-300 font-extrabold block uppercase tracking-wider">おやすみ前のセルフケア</span>
@@ -274,43 +268,46 @@
              ============================================== -->
         <section id="page-study" class="page">
             <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 text-center card-container">
-                <span id="timer-state-badge" class="inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20">
+                <span id="timer-state-badge" class="inline-block bg-teal-950/70 text-teal-350 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-md border border-teal-500/30">
                     アクア集中タイム (25分)
                 </span>
 
                 <!-- タイマーリング -->
-                <div class="relative w-52 h-52 mx-auto flex items-center justify-center">
+                <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
                     <svg class="w-full h-full transform -rotate-90">
-                        <circle cx="104" cy="104" r="90" stroke="#0f172a" stroke-width="6" fill="transparent" class="transition-colors duration-500" id="timer-bg-circle"/>
-                        <circle id="timer-progress" cx="104" cy="104" r="90" stroke="#22d3ee" stroke-width="8" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0" stroke-linecap="round" class="transition-all duration-300" />
+                        <circle cx="96" cy="96" r="82" stroke="#0f172a" stroke-width="6" fill="transparent" id="timer-bg-circle"/>
+                        <circle id="timer-progress" cx="96" cy="96" r="82" stroke="#22d3ee" stroke-width="8" fill="transparent" stroke-dasharray="515.22" stroke-dashoffset="0" stroke-linecap="round" class="transition-all duration-300" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="timer-time" class="text-3xl font-black text-cyan-100 tracking-wider transition-colors duration-500" id="timer-time-text">25:00</span>
+                        <span id="timer-time" class="text-3xl font-black text-cyan-100 tracking-wider">25:00</span>
                         <span id="timer-target" class="text-[9px] text-cyan-400 mt-1 font-bold">目標: 勉強に全集中！</span>
                     </div>
                 </div>
 
-                <p class="text-xs text-cyan-200/80 mt-6 leading-relaxed font-bold transition-colors duration-500" id="timer-subtext">
+                <p class="text-xs text-cyan-200/80 mt-6 leading-relaxed font-bold" id="timer-subtext">
                     25分がんばったら、5分お休みしよう。<br>ジェリタも一緒にお勉強中...✍️
                 </p>
 
                 <!-- コントロールボタン -->
                 <div class="flex justify-center gap-4 mt-8">
-                    <button id="btn-timer-reset" class="w-12 h-12 bg-slate-950/50 hover:bg-slate-900/50 text-cyan-400 rounded-full flex items-center justify-center active:scale-95 transition-all shadow-md border border-cyan-500/15">
-                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    <button id="btn-timer-reset" class="w-12 h-12 bg-slate-950/60 hover:bg-slate-900/60 text-cyan-400 rounded-full flex items-center justify-center active:scale-95 transition-all shadow-lg border border-cyan-500/20">
+                        <!-- リセット（回転）SVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
                     </button>
-                    <button id="btn-timer-toggle" class="px-7 h-12 bg-gradient-to-r from-cyan-500/60 to-indigo-500/60 hover:from-cyan-400 hover:to-indigo-400 text-cyan-100 font-bold rounded-full flex items-center gap-2 active:scale-95 transition-all shadow-lg border border-cyan-400/30">
-                        <i data-lucide="play" class="w-5 h-5" id="timer-play-icon"></i>
+                    <button id="btn-timer-toggle" class="px-7 h-12 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-cyan-100 font-bold rounded-full flex items-center gap-2 active:scale-95 transition-all shadow-xl shadow-cyan-500/10 border border-cyan-400/30">
+                        <!-- 再生・一時停止SVG（動的に切替） -->
+                        <svg id="timer-play-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <span id="timer-btn-text" class="text-sm">スタート</span>
                     </button>
                 </div>
             </div>
 
             <!-- 勉強応援カード -->
-            <div class="mt-5 bg-cyan-950/30 border border-cyan-500/10 rounded-[2rem] p-5 shadow-sm">
+            <div class="mt-5 bg-cyan-950/30 border border-cyan-500/20 rounded-[2rem] p-5 shadow-sm">
                 <div class="flex items-start gap-3.5">
                     <div class="bg-cyan-900/40 text-cyan-300 p-2.5 rounded-2xl shadow-sm border border-cyan-500/25">
-                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                        <!-- 本SVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
                     <div>
                         <h4 class="font-black text-cyan-200 text-xs">勉強を終えると...</h4>
@@ -323,14 +320,15 @@
         </section>
 
         <!-- ==============================================
-             3. 睡眠画面 (おやすみ・おはようログ)
+             3. 睡眠画面 (おやすみ・おはようログ & 過去の睡眠入力)
              ============================================== -->
         <section id="page-sleep" class="page">
-            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 text-center transition-all duration-500 card-container" id="sleep-card">
+            <!-- リアルタイム睡眠測定 -->
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 text-center card-container mb-5" id="sleep-card">
                 
-                <div class="w-40 h-40 mx-auto mb-6 bg-slate-950/40 rounded-full flex items-center justify-center shadow-inner relative border border-cyan-500/10 transition-colors duration-500" id="sleep-visual-container">
-                    <!-- 深海にたたずむベッドのSVG -->
-                    <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-sm opacity-80">
+                <div class="w-40 h-40 mx-auto mb-6 bg-slate-950/50 rounded-full flex items-center justify-center shadow-inner relative border border-cyan-500/20" id="sleep-visual-container">
+                    <!-- 深海ベッドSVG -->
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-sm opacity-90">
                         <rect x="15" y="45" width="70" height="35" rx="5" fill="#1e293b" />
                         <rect x="20" y="30" width="30" height="20" rx="4" fill="#334155" />
                         <rect x="50" y="30" width="30" height="20" rx="4" fill="#334155" />
@@ -339,47 +337,83 @@
                     </svg>
                 </div>
 
-                <h3 class="text-xl font-black text-cyan-100 transition-colors duration-500" id="sleep-title">すやすや深海測定</h3>
-                <p class="text-xs text-cyan-300/80 mt-2 max-w-xs mx-auto font-bold leading-relaxed transition-colors duration-500" id="sleep-guide-text">
+                <h3 class="text-lg font-black text-cyan-100" id="sleep-title">すやすや深海測定</h3>
+                <p class="text-xs text-cyan-300/80 mt-2 max-w-xs mx-auto font-bold leading-relaxed" id="sleep-guide-text">
                     お布団に入る瞬間に「おやすみ」をタップ。<br>起きたら「おはよう」を押してね。
                 </p>
 
-                <!-- メイン操作エリア -->
-                <div class="mt-8 flex flex-col items-center gap-4">
-                    <div id="sleep-status-text" class="text-xs font-black text-cyan-300 bg-cyan-950/60 px-4 py-2 rounded-full shadow-sm hidden border border-cyan-500/20">
+                <!-- メイン操作エリア（ボタンが確実に手前にくるようz-indexを確保） -->
+                <div class="mt-8 flex flex-col items-center gap-4 relative z-30">
+                    <div id="sleep-status-text" class="text-xs font-black text-cyan-300 bg-cyan-950/80 px-4 py-2.5 rounded-full shadow-md hidden border border-cyan-500/30">
                         現在すやすや眠っています... 💤
                     </div>
 
                     <!-- おやすみボタン -->
-                    <button id="btn-sleep-start" class="w-full py-3.5 bg-gradient-to-r from-indigo-500/50 to-cyan-500/50 hover:from-indigo-400 hover:to-cyan-400 text-cyan-100 font-black rounded-2xl shadow-lg border border-cyan-500/25 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
-                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    <button id="btn-sleep-start" class="w-full py-4 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-cyan-100 font-black rounded-2xl shadow-xl border border-cyan-400/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer">
+                        <!-- 月SVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
                         <span>おやすみ (ベッドに入る)</span>
                     </button>
 
                     <!-- おはようボタン -->
-                    <button id="btn-sleep-end" class="w-full py-3.5 bg-gradient-to-r from-amber-500/50 to-yellow-500/50 hover:from-amber-400 hover:to-yellow-400 text-slate-900 font-black rounded-2xl shadow-lg border border-yellow-400/30 flex items-center justify-center gap-2 active:scale-[0.98] transition-all hidden animate-pulse">
-                        <i data-lucide="sun" class="w-5 h-5"></i>
+                    <button id="btn-sleep-end" class="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-350 text-slate-900 font-black rounded-2xl shadow-xl border border-yellow-300/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all hidden animate-pulse cursor-pointer">
+                        <!-- 太陽SVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
                         <span>おはよう！ (目が覚めた)</span>
                     </button>
                 </div>
 
                 <!-- 昨夜の記録 -->
-                <div class="mt-8 border-t border-cyan-500/10 pt-6 flex justify-around text-center transition-colors duration-500" id="last-sleep-summary">
+                <div class="mt-8 border-t border-cyan-500/10 pt-6 flex justify-around text-center" id="last-sleep-summary">
                     <div>
                         <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">昨日の就寝</span>
-                        <span id="summary-bedtime" class="font-black text-sm text-cyan-100 transition-colors duration-500">-:--</span>
+                        <span id="summary-bedtime" class="font-black text-sm text-cyan-100">-:--</span>
                     </div>
-                    <div class="border-l border-cyan-500/10 h-8 self-center transition-colors duration-500" id="summary-divider-1"></div>
+                    <div class="border-l border-cyan-500/10 h-8 self-center"></div>
                     <div>
                         <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">起床時間</span>
-                        <span id="summary-waketime" class="font-black text-sm text-cyan-100 transition-colors duration-500">-:--</span>
+                        <span id="summary-waketime" class="font-black text-sm text-cyan-100">-:--</span>
                     </div>
-                    <div class="border-l border-cyan-500/10 h-8 self-center transition-colors duration-500" id="summary-divider-2"></div>
+                    <div class="border-l border-cyan-500/10 h-8 self-center"></div>
                     <div>
                         <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">睡眠時間</span>
-                        <span id="summary-duration" class="font-black text-sm text-cyan-300 transition-colors duration-500">-:--</span>
+                        <span id="summary-duration" class="font-black text-sm text-cyan-300">-:--</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- 過去の睡眠時間を手動で追加・記録するフォーム -->
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/15 card-container">
+                <h4 class="font-black text-cyan-200 flex items-center gap-2 text-sm mb-4">
+                    <!-- ペンSVG -->
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    睡眠時間を手動で記録する
+                </h4>
+                <p class="text-[11px] text-cyan-300/85 mb-4 font-bold">
+                    「昨日おやすみボタンを押し忘れた！」という時でも、後から睡眠データを追加できます。
+                </p>
+
+                <form id="form-manual-sleep" class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-xs text-cyan-300 font-bold mb-1.5" for="manual-date">睡眠をとった日付</label>
+                        <input type="date" id="manual-date" required class="w-full bg-slate-950/80 border border-cyan-500/30 rounded-xl px-3 py-2 text-xs font-black text-cyan-100 focus:outline-none focus:border-cyan-400 transition-all">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-cyan-300 font-bold mb-1.5" for="manual-bedtime">就寝時間 (夜)</label>
+                            <input type="time" id="manual-bedtime" required class="w-full bg-slate-950/80 border border-cyan-500/30 rounded-xl px-3 py-2 text-xs font-black text-cyan-100 focus:outline-none focus:border-cyan-400 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-cyan-300 font-bold mb-1.5" for="manual-waketime">起床時間 (朝)</label>
+                            <input type="time" id="manual-waketime" required class="w-full bg-slate-950/80 border border-cyan-500/30 rounded-xl px-3 py-2 text-xs font-black text-cyan-100 focus:outline-none focus:border-cyan-400 transition-all">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full mt-2 py-3 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-cyan-100 font-black rounded-xl text-xs shadow-md border border-cyan-400/20 flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all cursor-pointer">
+                        <!-- チェックマークSVG -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                        <span>この睡眠時間で記録する</span>
+                    </button>
+                </form>
             </div>
         </section>
 
@@ -387,10 +421,11 @@
              4. グラフ画面 (睡眠×勉強 相関分析)
              ============================================== -->
         <section id="page-graph" class="page">
-            <div class="bg-cyan-950/30 border border-cyan-500/10 rounded-[2rem] p-5 mb-5 shadow-sm">
+            <div class="bg-cyan-950/30 border border-cyan-500/15 rounded-[2rem] p-5 mb-5 shadow-sm">
                 <div class="flex gap-3.5">
-                    <div class="bg-slate-900/60 text-cyan-300 p-2.5 rounded-2xl flex-shrink-0 shadow-sm border border-cyan-500/10">
-                        <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    <div class="bg-slate-900/60 text-cyan-300 p-2.5 rounded-2xl flex-shrink-0 border border-cyan-500/10">
+                        <!-- 矢印SVG -->
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941"/></svg>
                     </div>
                     <div>
                         <h4 class="font-black text-cyan-200 text-xs">すやすやグラフの解説</h4>
@@ -403,8 +438,9 @@
 
             <!-- 相関グラフエリア -->
             <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-5 shadow-2xl border border-cyan-500/10 mb-5 card-container">
-                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs transition-colors duration-500" id="graph-title">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
+                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs" id="graph-title">
+                    <!-- グラフマークSVG -->
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v16.5M21 19.5H3.75M6.75 12l3-3 2.25 2.25 3.75-3.75M21 7.5l-3 3-2.25-2.25-3.75 3.75"/></svg>
                     今週のデータ（睡眠 vs 勉強時間）
                 </h4>
                 <div class="w-full h-64 relative">
@@ -414,22 +450,24 @@
 
             <!-- 個別データのまとめ -->
             <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-5 shadow-2xl border border-cyan-500/10 card-container">
-                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs transition-colors duration-500" id="table-title">
-                    <i data-lucide="history" class="w-4 h-4 text-cyan-400"></i>
+                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs" id="table-title">
+                    <!-- 時計マークSVG -->
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     直近の記録データ一覧
                 </h4>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
-                            <tr class="border-b border-cyan-500/10 text-cyan-400 font-bold transition-colors duration-500" id="table-header-row">
+                            <tr class="border-b border-cyan-500/10 text-cyan-400 font-bold" id="table-header-row">
                                 <th class="py-2.5">日付</th>
                                 <th class="py-2.5 text-center">睡眠</th>
                                 <th class="py-2.5 text-center">勉強</th>
                                 <th class="py-2.5 text-right">獲得</th>
+                                <th class="py-2.5 text-center w-10">操作</th>
                             </tr>
                         </thead>
                         <tbody id="data-table-body" class="font-bold text-cyan-100">
-                            <!-- JSによって行が挿入されます -->
+                            <!-- JavaScriptによって動的に挿入されます -->
                         </tbody>
                     </table>
                 </div>
@@ -438,80 +476,44 @@
     </main>
 
     <!-- ボトムナビゲーション -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-950/80 backdrop-blur-xl border-t border-cyan-500/10 shadow-2xl px-6 py-2.5 flex justify-between items-center rounded-t-[2.5rem] z-40">
-        <button id="nav-home" class="flex flex-col items-center gap-1 text-cyan-400 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
-            <i data-lucide="home" class="w-5 h-5"></i>
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-950/85 backdrop-blur-xl border-t border-cyan-500/10 shadow-2xl px-6 py-3.5 flex justify-between items-center rounded-t-[2.5rem] z-45">
+        <button id="nav-home" class="flex flex-col items-center gap-1 text-cyan-400 transition-colors py-1 px-3.5 rounded-2xl active:bg-slate-900/50 cursor-pointer">
+            <!-- ホームアイコンSVG -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
             <span class="text-[9px] font-black">相棒</span>
         </button>
-        <button id="nav-study" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
-            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+        <button id="nav-study" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1 px-3.5 rounded-2xl active:bg-slate-900/50 cursor-pointer">
+            <!-- 勉強ハットSVG -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.263 8.535l7.5-4a1.5 1.5 0 011.474 0l7.5 4A1.5 1.5 0 0121 9.852v3.314c0 .54-.343 1.014-.853 1.179l-7.5 2.425a1.5 1.5 0 01-.937 0l-7.5-2.425A1.25 1.25 0 013.5 13.166V9.852c0-.566.32-1.082.853-1.317z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 15v3c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-3"/></svg>
             <span class="text-[9px] font-black">勉強</span>
         </button>
-        <button id="nav-sleep" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
-            <i data-lucide="moon" class="w-5 h-5"></i>
+        <button id="nav-sleep" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1 px-3.5 rounded-2xl active:bg-slate-900/50 cursor-pointer">
+            <!-- 月星SVG -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
             <span class="text-[9px] font-black">睡眠</span>
         </button>
-        <button id="nav-graph" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
-            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+        <button id="nav-graph" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1 px-3.5 rounded-2xl active:bg-slate-900/50 cursor-pointer">
+            <!-- 分析棒グラフSVG -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.625C7.5 19.371 6.996 19.875 6.375 19.875h-2.25A1.125 1.125 0 013 18.75v-5.625zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v10.125c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.625c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
             <span class="text-[9px] font-black">分析</span>
         </button>
     </nav>
 
     <!-- アラートトースター -->
-    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-950/90 text-cyan-100 text-[11px] font-black px-5 py-3 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-cyan-500/20">
-        <i data-lucide="info" class="w-4 h-4 text-cyan-300" id="toast-icon"></i>
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-950/95 text-cyan-100 text-[11px] font-black px-5 py-3.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-cyan-500/20">
+        <!-- 情報マークSVG -->
+        <svg class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
         <span id="toast-text">メッセージ</span>
     </div>
 
     <!-- ==============================================
-         TypeScript による強固なアプリケーションロジック
+         JavaScript による強固なアプリケーションロジック（TypeScriptから書き直し、超安定化）
          ============================================== -->
-    <script type="text/typescript">
-        /* ----------------------------------------------------
-           1. 厳格な型定義 (TypeScript Interfaces & Types)
-           ---------------------------------------------------- */
-        interface CharState {
-            name: string;
-            level: number;
-            exp: number;
-            neededExp: number;
-        }
-
-        interface SleepLog {
-            date: string;       // 形式: "MM/DD"
-            bedtime: string;    // 形式: "HH:MM"
-            waketime: string;   // 形式: "HH:MM"
-            duration: number;   // 時間単位 (h)
-        }
-
-        interface StudyLog {
-            date: string;       // 形式: "MM/DD"
-            durationMinutes: number;
-        }
-
-        interface AppState {
-            char: CharState;
-            sleepLogs: SleepLog[];
-            studyLogs: StudyLog[];
-            currentSleepStart: string | null; // ISOString
-            currentStudyStart: string | null; // ISOString
-        }
-
-        interface RoutineAdvice {
-            title: string;
-            desc: string;
-            level: number;
-            type: 'aroma' | 'stretch' | 'habit';
-        }
-
-        type CharacterFace = 'normal' | 'study' | 'sleep' | 'sleepy';
-
-        /* ----------------------------------------------------
-           2. アプリケーション状態 (Initial State & LocalStorage)
-           ---------------------------------------------------- */
-        const STORAGE_KEY: string = 'nemusapo_data_aquarium';
+    <script>
+        const STORAGE_KEY = 'nemusapo_data_aquarium_v3';
         
-        let appState: AppState = {
+        // 状態オブジェクト
+        let appState = {
             char: {
                 name: 'ジェリタ',
                 level: 1,
@@ -525,29 +527,30 @@
         };
 
         // デモ用 初期表示用ダミーデータ
-        const mockSleepLogs: SleepLog[] = [
-            { date: '06/03', bedtime: '23:45', waketime: '06:15', duration: 6.5 },
-            { date: '06/04', bedtime: '00:15', waketime: '06:30', duration: 6.25 },
-            { date: '06/05', bedtime: '22:30', waketime: '07:30', duration: 9.0 },
-            { date: '06/06', bedtime: '23:00', waketime: '07:30', duration: 8.5 },
-            { date: '06/07', bedtime: '01:00', waketime: '06:00', duration: 5.0 },
-            { date: '06/08', bedtime: '22:45', waketime: '07:15', duration: 8.5 },
+        const mockSleepLogs = [
+            { date: '06/11', bedtime: '23:45', waketime: '06:15', duration: 6.5 },
+            { date: '06/12', bedtime: '00:15', waketime: '06:30', duration: 6.25 },
+            { date: '06/13', bedtime: '22:30', waketime: '07:30', duration: 9.0 },
+            { date: '06/14', bedtime: '23:00', waketime: '07:30', duration: 8.5 },
+            { date: '06/15', bedtime: '01:00', waketime: '06:00', duration: 5.0 },
+            { date: '06/16', bedtime: '22:45', waketime: '07:15', duration: 8.5 },
         ];
 
-        const mockStudyLogs: StudyLog[] = [
-            { date: '06/03', durationMinutes: 50 },
-            { date: '06/04', durationMinutes: 25 },
-            { date: '06/05', durationMinutes: 100 },
-            { date: '06/06', durationMinutes: 75 },
-            { date: '06/07', durationMinutes: 25 },
-            { date: '06/08', durationMinutes: 120 },
+        const mockStudyLogs = [
+            { date: '06/11', durationMinutes: 50 },
+            { date: '06/12', durationMinutes: 25 },
+            { date: '06/13', durationMinutes: 100 },
+            { date: '06/14', durationMinutes: 75 },
+            { date: '06/15', durationMinutes: 25 },
+            { date: '06/16', durationMinutes: 120 },
         ];
 
-        function loadState(): void {
-            const saved: string | null = localStorage.getItem(STORAGE_KEY);
+        // 状態の復元とセーブ
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
-                    const parsed = JSON.parse(saved) as AppState;
+                    const parsed = JSON.parse(saved);
                     appState = {
                         char: parsed.char || appState.char,
                         sleepLogs: parsed.sleepLogs || [],
@@ -565,21 +568,18 @@
             }
         }
 
-        function saveState(): void {
+        function saveState() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
         }
 
-        /* ----------------------------------------------------
-           3. 画面コントロール (Routing)
-           ---------------------------------------------------- */
-        function switchPage(pageId: 'home' | 'study' | 'sleep' | 'graph'): void {
-            document.querySelectorAll('.page').forEach((page: Element) => {
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach((page) => {
                 page.classList.remove('active');
             });
             const targetPage = document.getElementById(`page-${pageId}`);
             if (targetPage) targetPage.classList.add('active');
 
-            const navIds: ('home' | 'study' | 'sleep' | 'graph')[] = ['home', 'study', 'sleep', 'graph'];
+            const navIds = ['home', 'study', 'sleep', 'graph'];
             navIds.forEach((id) => {
                 const navBtn = document.getElementById(`nav-${id}`);
                 if (navBtn) {
@@ -598,12 +598,22 @@
             } else if (pageId === 'graph') {
                 renderCharts();
                 updateDataTable();
+            } else if (pageId === 'sleep') {
+                // 手動フォームの日付を今日に初期設定
+                const manualDateInput = document.getElementById('manual-date');
+                if (manualDateInput) {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                    const day = now.getDate().toString().padStart(2, '0');
+                    manualDateInput.value = `${year}-${month}-${day}`;
+                }
             }
         }
 
-        function changeCharacterFace(state: CharacterFace): void {
-            const faces: CharacterFace[] = ['normal', 'study', 'sleep', 'sleepy'];
-            faces.forEach((face: CharacterFace) => {
+        function changeCharacterFace(state) {
+            const faces = ['normal', 'study', 'sleep', 'sleepy'];
+            faces.forEach((face) => {
                 const faceGroup = document.getElementById(`face-${face}`);
                 if (faceGroup) {
                     if (face === state) {
@@ -619,42 +629,38 @@
                 switch(state) {
                     case 'study':
                         badge.innerText = 'お勉強中 ✍️';
-                        badge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-teal-500/20";
+                        badge.className = "inline-block bg-teal-950/80 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-md border border-teal-500/30";
                         break;
                     case 'sleep':
                         badge.innerText = 'すやすや... 💤';
-                        badge.className = "inline-block bg-indigo-950/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/20";
+                        badge.className = "inline-block bg-indigo-950/80 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-md border border-cyan-500/30";
                         break;
                     case 'sleepy':
                         badge.innerText = 'ウトウト... 🥱';
-                        badge.className = "inline-block bg-amber-950/60 text-amber-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-amber-500/20";
+                        badge.className = "inline-block bg-amber-950/80 text-amber-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-md border border-amber-500/30";
                         break;
                     default:
                         badge.innerText = 'のんびり中 🍀';
-                        badge.className = "inline-block bg-slate-900/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/10";
+                        badge.className = "inline-block bg-slate-900/80 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-md border border-cyan-500/20";
                 }
             }
         }
 
-        /* ----------------------------------------------------
-           4. ホーム画面 & 安眠コンテンツ (海・水槽テーマ)
-           ---------------------------------------------------- */
-        const sleepRoutines: RoutineAdvice[] = [
-            { title: "マリンフォレストの香り", desc: "深みのある海辺の森をイメージ。自律神経を静かに整えて睡眠の質を高めるよ。枕元にそっと香らせてね。", level: 1, type: 'aroma' },
-            { title: "オレンジと海のブレンド", desc: "みずみずしい柑橘と潮風のような穏やかな香りが、勉強での頭の使いすぎをリセットするよ。", level: 1, type: 'aroma' },
-            { title: "波のさざなみ深呼吸", desc: "波の満ち引きをイメージして呼吸。4秒で吸い込み、海に溶けるように8秒かけてゆっくり吐き出そう。", level: 2, type: 'stretch' },
-            { title: "深海ブルーカモミール", desc: "リンゴのような甘さと、ハーブの深い青が引き出す究極の安らぎ。一日の肩の荷をふわっと下ろしてくれます。", level: 3, type: 'aroma' },
-            { title: "クラゲのゆったり浮遊瞑想", desc: "布団の上で手足を軽く投げ出し、自分が水の中にぷかぷかと浮いているように全身の力を抜き切ろう。", level: 4, type: 'stretch' },
-            { title: "深海の静寂ストレッチ", desc: "仰向けで両手を上に伸ばしてぐーっと伸びをしてから、すとんと脱力。血流がスムーズになり、眠りを誘うよ。", level: 5, type: 'stretch' },
+        const sleepRoutines = [
+            { title: "シーミントの香り", desc: "みずみずしい爽やかさと穏やかさが調和。勉強の疲れをリセットして眠りへと誘うよ。", level: 1, type: 'aroma' },
+            { title: "波のゆらぎ深呼吸", desc: "波の音をイメージしながら、4秒で吸って、8秒かけて深くゆっくり吐き出してみよう。", level: 2, type: 'stretch' },
+            { title: "オーシャンブルーラベンダー", desc: "心をふっと落ち着かせる極上リラクゼーション。一日の疲れや考えごとを優しくリセットするよ。", level: 3, type: 'aroma' },
+            { title: "クラゲの深海浮遊瞑想", desc: "お布団に大の字に寝そべって、自分の体が水中にぷかぷかと浮いていくイメージで全身を脱力してね。", level: 4, type: 'stretch' },
+            { title: "深海のひんやりストレッチ", desc: "仰向けで手足を真上に伸ばし、ブラブラと30秒揺する。手足から熱が逃げ、一気に眠気が高まるよ。", level: 5, type: 'stretch' }
         ];
 
-        function getRoutineAdvice(level: number): RoutineAdvice {
+        function getRoutineAdvice(level) {
             const available = sleepRoutines.filter((r) => r.level <= level);
             const index = Math.floor(Math.random() * available.length);
             return available[index];
         }
 
-        function updateHomeUI(): void {
+        function updateHomeUI() {
             const levelEl = document.getElementById('char-level');
             const expBarEl = document.getElementById('char-exp-bar');
             const expBarLargeEl = document.getElementById('char-exp-bar-large');
@@ -688,7 +694,7 @@
 
             if (hour >= 19 || hour < 5) {
                 if (adviceText) {
-                    adviceText.innerText = "そろそろ深海の静けさを感じながらお布団に入ろう。スマホの光を遮るだけで、深海のような穏やかな夢が見られるよ。";
+                    adviceText.innerText = "そろそろ深海の静けさを感じながらお布団に入ろう。スマホの画面から離れて、おだやかな夢をみる準備をしよう。";
                 }
                 const routine = getRoutineAdvice(appState.char.level);
                 const aromaTitleEl = document.getElementById('aroma-title');
@@ -700,25 +706,24 @@
                 
                 if (aromaIconContainer) {
                     if (routine.type === 'stretch') {
-                        aromaIconContainer.innerHTML = `<i data-lucide="accessibility" class="w-5 h-5"></i>`;
+                        aromaIconContainer.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>`;
                         aromaIconContainer.className = "bg-teal-900/50 p-3 rounded-2xl text-teal-300 shadow-sm border border-teal-500/20";
                     } else {
-                        aromaIconContainer.innerHTML = `<i data-lucide="droplet" class="w-5 h-5"></i>`;
+                        aromaIconContainer.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg>`;
                         aromaIconContainer.className = "bg-cyan-900/50 p-3 rounded-2xl text-cyan-300 shadow-sm border border-cyan-500/20";
                     }
                 }
                 
                 if (aromaCard) aromaCard.classList.remove('hidden');
-                if (typeof lucide !== 'undefined') lucide.createIcons();
             } else {
                 if (adviceText) {
-                    adviceText.innerText = "おはよう！朝の光をたくさん受けて、頭を起こそうね。夜の心地よい「すやすや習慣」は朝の光から始まっているよ。";
+                    adviceText.innerText = "おはよう！朝の光を浴びて深海から浮上しよう。すこやかな夜のリズムは朝の陽ざしからつくられるよ。";
                 }
                 if (aromaCard) aromaCard.classList.add('hidden');
             }
         }
 
-        function addExperience(amount: number): void {
+        function addExperience(amount) {
             appState.char.exp += amount;
             showToast(`ジェリタが ${amount} EXP を吸収しました！🫧`);
             
@@ -734,11 +739,10 @@
             updateHomeUI();
         }
 
-        function triggerLevelUpEffect(): void {
+        function triggerLevelUpEffect() {
             const container = document.getElementById('confetti-container');
             if (!container) return;
 
-            // 星屑のようにきらめくブルーの演出
             for (let i = 0; i < 35; i++) {
                 const star = document.createElement('div');
                 star.className = 'stardust';
@@ -747,27 +751,24 @@
                 star.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
                 container.appendChild(star);
 
-                setTimeout(() => star.remove(), 3000);
+                setTimeout(() => star.remove(), 2500);
             }
         }
 
-        /* ----------------------------------------------------
-           5. ポモドーロタイマーの実装 (Timer)
-           ---------------------------------------------------- */
-        let timerInterval: number | null = null;
-        const STUDY_DURATION: number = 25 * 60; 
-        const BREAK_DURATION: number = 5 * 60;  
-        let currentTimerTime: number = STUDY_DURATION;
-        let isTimerRunning: boolean = false;
-        let isBreakMode: boolean = false;
+        let timerInterval = null;
+        const STUDY_DURATION = 25 * 60; 
+        const BREAK_DURATION = 5 * 60;  
+        let currentTimerTime = STUDY_DURATION;
+        let isTimerRunning = false;
+        let isBreakMode = false;
 
-        const timerProgressCircle = document.getElementById('timer-progress') as SVGCircleElement | null;
+        const timerProgressCircle = document.getElementById('timer-progress');
         const timerTimeText = document.getElementById('timer-time');
         const timerBtnText = document.getElementById('timer-btn-text');
         const timerPlayIcon = document.getElementById('timer-play-icon');
         const timerStateBadge = document.getElementById('timer-state-badge');
 
-        function updateTimerDisplay(): void {
+        function updateTimerDisplay() {
             const minutes = Math.floor(currentTimerTime / 60);
             const seconds = currentTimerTime % 60;
             if (timerTimeText) {
@@ -776,24 +777,28 @@
             
             if (timerProgressCircle) {
                 const totalDuration = isBreakMode ? BREAK_DURATION : STUDY_DURATION;
-                const progress = (currentTimerTime / totalDuration) * 565.48;
+                const progress = (currentTimerTime / totalDuration) * 515.22;
                 timerProgressCircle.style.strokeDashoffset = progress.toString();
             }
         }
 
-        function toggleTimer(): void {
+        function toggleTimer() {
             if (isTimerRunning) {
                 if (timerInterval) clearInterval(timerInterval);
                 isTimerRunning = false;
-                if (timerBtnText) timerBtnText.innerText = "再開";
-                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+                if (timerBtnText) timerBtnText.innerText = "スタート";
+                if (timerPlayIcon) {
+                    timerPlayIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+                }
                 appState.currentStudyStart = null;
                 saveState();
                 changeCharacterFace('normal');
             } else {
                 isTimerRunning = true;
-                if (timerBtnText) timerBtnText.innerText = "小休止";
-                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'pause');
+                if (timerBtnText) timerBtnText.innerText = "一時停止";
+                if (timerPlayIcon) {
+                    timerPlayIcon.innerHTML = `<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>`;
+                }
                 
                 if (!isBreakMode) {
                     appState.currentStudyStart = new Date().toISOString();
@@ -801,7 +806,7 @@
                     changeCharacterFace('study');
                 }
 
-                timerInterval = window.setInterval(() => {
+                timerInterval = setInterval(() => {
                     if (currentTimerTime > 0) {
                         currentTimerTime--;
                         updateTimerDisplay();
@@ -812,10 +817,9 @@
                     }
                 }, 1000);
             }
-            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        function resetTimer(): void {
+        function resetTimer() {
             if (timerInterval) clearInterval(timerInterval);
             isTimerRunning = false;
             isBreakMode = false;
@@ -823,19 +827,20 @@
             
             if (timerStateBadge) {
                 timerStateBadge.innerText = "アクア集中タイム (25分)";
-                timerStateBadge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20";
+                timerStateBadge.className = "inline-block bg-teal-950/70 text-teal-350 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-md border border-teal-500/30";
             }
             if (timerBtnText) timerBtnText.innerText = "スタート";
-            if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+            if (timerPlayIcon) {
+                timerPlayIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+            }
             
             appState.currentStudyStart = null;
             saveState();
             changeCharacterFace('normal');
             updateTimerDisplay();
-            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        function handleTimerComplete(): void {
+        function handleTimerComplete() {
             if (!isBreakMode) {
                 showToast("集中お疲れ様！がんばったね、素晴らしいよ！🌿");
                 
@@ -853,10 +858,12 @@
                 currentTimerTime = BREAK_DURATION;
                 if (timerStateBadge) {
                     timerStateBadge.innerText = "波の休憩タイム (5分)";
-                    timerStateBadge.className = "inline-block bg-sky-950/60 text-sky-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-sky-500/20";
+                    timerStateBadge.className = "inline-block bg-sky-950/70 text-sky-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-md border border-sky-500/30";
                 }
                 if (timerBtnText) timerBtnText.innerText = "休憩する";
-                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'coffee');
+                if (timerPlayIcon) {
+                    timerPlayIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+                }
                 changeCharacterFace('normal');
             } else {
                 showToast("リフレッシュ完了！次の海へ漕ぎ出そう。");
@@ -864,23 +871,21 @@
                 currentTimerTime = STUDY_DURATION;
                 if (timerStateBadge) {
                     timerStateBadge.innerText = "アクア集中タイム (25分)";
-                    timerStateBadge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20";
+                    timerStateBadge.className = "inline-block bg-teal-950/70 text-teal-350 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-md border border-teal-500/30";
                 }
                 if (timerBtnText) timerBtnText.innerText = "スタート";
-                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+                if (timerPlayIcon) {
+                    timerPlayIcon.innerHTML = `<path d="M8 5v14l11-7z"/>`;
+                }
             }
             updateTimerDisplay();
-            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        /* ----------------------------------------------------
-           6. 睡眠ログの実装 (Sleep System)
-           ---------------------------------------------------- */
-        const btnSleepStart = document.getElementById('btn-sleep-start') as HTMLButtonElement | null;
-        const btnSleepEnd = document.getElementById('btn-sleep-end') as HTMLButtonElement | null;
+        const btnSleepStart = document.getElementById('btn-sleep-start');
+        const btnSleepEnd = document.getElementById('btn-sleep-end');
         const sleepStatusText = document.getElementById('sleep-status-text');
 
-        function initSleepUI(): void {
+        function initSleepUI() {
             const header = document.querySelector('header');
             const headerTitle = document.getElementById('header-title');
             const cards = document.querySelectorAll('.card-container');
@@ -891,13 +896,17 @@
                 if (sleepStatusText) sleepStatusText.classList.remove('hidden');
                 document.body.classList.add('dark-mode');
                 
-                if (header) header.classList.add('bg-slate-950/60', 'border-slate-900/50');
-                if (header) header.classList.remove('bg-slate-900/40');
-                if (headerTitle) headerTitle.classList.add('text-indigo-300');
-                if (headerTitle) headerTitle.classList.remove('text-cyan-200');
+                if (header) {
+                    header.classList.add('bg-slate-950/80', 'border-slate-900/50');
+                    header.classList.remove('bg-slate-900/60');
+                }
+                if (headerTitle) {
+                    headerTitle.classList.add('text-indigo-300');
+                    headerTitle.classList.remove('text-cyan-200');
+                }
                 
                 cards.forEach((c) => {
-                    c.classList.add('bg-slate-950/30', 'border-indigo-500/10', 'text-slate-100');
+                    c.classList.add('bg-slate-950/40', 'border-indigo-500/10', 'text-slate-100');
                     c.classList.remove('bg-slate-900/50', 'text-cyan-100');
                 });
             } else {
@@ -906,20 +915,24 @@
                 if (sleepStatusText) sleepStatusText.classList.add('hidden');
                 document.body.classList.remove('dark-mode');
 
-                if (header) header.classList.remove('bg-slate-950/60', 'border-slate-900/50');
-                if (header) header.classList.add('bg-slate-900/40');
-                if (headerTitle) headerTitle.classList.remove('text-indigo-300');
-                if (headerTitle) headerTitle.classList.add('text-cyan-200');
+                if (header) {
+                    header.classList.remove('bg-slate-950/80', 'border-slate-900/50');
+                    header.classList.add('bg-slate-900/60');
+                }
+                if (headerTitle) {
+                    headerTitle.classList.remove('text-indigo-300');
+                    headerTitle.classList.add('text-cyan-200');
+                }
 
                 cards.forEach((c) => {
-                    c.classList.remove('bg-slate-950/30', 'border-indigo-500/10', 'text-slate-100');
+                    c.classList.remove('bg-slate-950/40', 'border-indigo-500/10', 'text-slate-100');
                     c.classList.add('bg-slate-900/50', 'text-cyan-100');
                 });
             }
             updateSleepSummaryDisplay();
         }
 
-        function handleSleepStart(): void {
+        function handleSleepStart() {
             appState.currentSleepStart = new Date().toISOString();
             saveState();
             initSleepUI();
@@ -927,7 +940,7 @@
             showToast("おやすみなさい。画面を伏せて、海のような深い安らぎを。💤");
         }
 
-        function handleSleepEnd(): void {
+        function handleSleepEnd() {
             if (!appState.currentSleepStart) return;
 
             const sleepTime = new Date(appState.currentSleepStart);
@@ -944,12 +957,12 @@
                 return;
             }
 
-            const pad = (num: number): string => num.toString().padStart(2, '0');
+            const pad = (num) => num.toString().padStart(2, '0');
             const bedtimeStr = `${pad(sleepTime.getHours())}:${pad(sleepTime.getMinutes())}`;
             const waketimeStr = `${pad(wakeTime.getHours())}:${pad(wakeTime.getMinutes())}`;
             const todayStr = getTodayString();
 
-            const newLog: SleepLog = {
+            const newLog = {
                 date: todayStr,
                 bedtime: bedtimeStr,
                 waketime: waketimeStr,
@@ -977,7 +990,94 @@
             addExperience(expEarned);
         }
 
-        function updateSleepSummaryDisplay(): void {
+        function handleManualSleepSubmit(e) {
+            e.preventDefault();
+            const dateInput = document.getElementById('manual-date');
+            const bedtimeInput = document.getElementById('manual-bedtime');
+            const waketimeInput = document.getElementById('manual-waketime');
+
+            if (!dateInput || !bedtimeInput || !waketimeInput) return;
+
+            const dateValue = dateInput.value; 
+            const bedtimeValue = bedtimeInput.value; 
+            const waketimeValue = waketimeInput.value; 
+
+            if (!dateValue || !bedtimeValue || !waketimeValue) {
+                showToast("入力項目が足りないよ。");
+                return;
+            }
+
+            const dateParts = dateValue.split('-');
+            if (dateParts.length !== 3) return;
+            const formattedDate = `${dateParts[1]}/${dateParts[2]}`;
+
+            const [bHour, bMin] = bedtimeValue.split(':').map(Number);
+            const [wHour, wMin] = waketimeValue.split(':').map(Number);
+
+            let bedTotalMin = bHour * 60 + bMin;
+            let wakeTotalMin = wHour * 60 + wMin;
+
+            if (wakeTotalMin < bedTotalMin) {
+                wakeTotalMin += 24 * 60;
+            }
+
+            const diffMin = wakeTotalMin - bedTotalMin;
+            const durationHours = parseFloat((diffMin / 60).toFixed(2));
+
+            if (durationHours <= 0) {
+                showToast("正しい就寝時間と起床時間を入力してね。");
+                return;
+            }
+
+            const newLog = {
+                date: formattedDate,
+                bedtime: bedtimeValue,
+                waketime: waketimeValue,
+                duration: durationHours
+            };
+
+            const index = appState.sleepLogs.findIndex((l) => l.date === formattedDate);
+            if (index !== -1) {
+                appState.sleepLogs[index] = newLog;
+            } else {
+                appState.sleepLogs.push(newLog);
+            }
+
+            let expEarned = 30;
+            if (durationHours >= 7 && durationHours <= 9) {
+                expEarned += 20;
+                showToast(`手動睡眠を追加したよ！理想の睡眠ボーナス発動！ +50 EXP 🌟`);
+            } else {
+                showToast(`過去の睡眠（${durationHours}時間）を追加したよ！ +30 EXP 🫧`);
+            }
+
+            saveState();
+            addExperience(expEarned);
+            updateSleepSummaryDisplay();
+
+            bedtimeInput.value = '';
+            waketimeInput.value = '';
+        }
+
+        function deleteLog(date) {
+            const indexSleep = appState.sleepLogs.findIndex(l => l.date === date);
+            if (indexSleep !== -1) {
+                appState.sleepLogs.splice(indexSleep, 1);
+            }
+
+            const indexStudy = appState.studyLogs.findIndex(l => l.date === date);
+            if (indexStudy !== -1) {
+                appState.studyLogs.splice(indexStudy, 1);
+            }
+
+            saveState();
+            showToast(`${date} の記録を削除したよ。🧹`);
+            renderCharts();
+            updateDataTable();
+            updateSleepSummaryDisplay();
+        }
+
+        function updateSleepSummaryDisplay() {
             const summaryBedtime = document.getElementById('summary-bedtime');
             const summaryWaketime = document.getElementById('summary-waketime');
             const summaryDuration = document.getElementById('summary-duration');
@@ -994,20 +1094,21 @@
             }
         }
 
-        /* ----------------------------------------------------
-           7. グラフ描画とデータ一覧 (Chart.js & Visualization)
-           ---------------------------------------------------- */
-        let correlationChart: Chart | null = null;
+        let correlationChart = null;
 
-        function renderCharts(): void {
-            const canvas = document.getElementById('correlation-chart') as HTMLCanvasElement | null;
+        function renderCharts() {
+            if (typeof Chart === 'undefined') {
+                console.warn("Chart.js がまだロードされていません。");
+                return;
+            }
+            const canvas = document.getElementById('correlation-chart');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
             
-            const dates: string[] = [];
-            const sleepData: number[] = [];
-            const studyData: number[] = [];
+            const dates = [];
+            const sleepData = [];
+            const studyData = [];
 
             for (let i = 5; i >= 0; i--) {
                 const d = new Date();
@@ -1026,7 +1127,6 @@
                 correlationChart.destroy();
             }
 
-            // チャートのフォント＆線の色もアクアトーンに統一
             correlationChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1035,7 +1135,7 @@
                         {
                             label: 'すやすや睡眠 (時間)',
                             data: sleepData,
-                            backgroundColor: 'rgba(99, 102, 241, 0.45)', // パステルインディゴ
+                            backgroundColor: 'rgba(99, 102, 241, 0.45)', 
                             borderColor: '#818cf8',
                             borderWidth: 1.5,
                             borderRadius: 8,
@@ -1044,7 +1144,7 @@
                         {
                             label: 'しっかり勉強 (時間)',
                             data: studyData,
-                            backgroundColor: 'rgba(34, 211, 238, 0.4)', // パステルシアン
+                            backgroundColor: 'rgba(34, 211, 238, 0.4)', 
                             borderColor: '#22d3ee',
                             borderWidth: 2.5,
                             borderRadius: 8,
@@ -1108,7 +1208,7 @@
             });
         }
 
-        function updateDataTable(): void {
+        function updateDataTable() {
             const tableBody = document.getElementById('data-table-body');
             if (!tableBody) return;
             tableBody.innerHTML = '';
@@ -1119,7 +1219,7 @@
             ])].sort().reverse().slice(0, 5);
 
             if (allDates.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500 font-bold text-xs">まだ記録がありません ☕️</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-500 font-bold text-xs">まだ記録がありません ☕️</td></tr>`;
                 return;
             }
 
@@ -1136,52 +1236,62 @@
 
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-cyan-500/5 hover:bg-slate-900/30 transition-colors duration-200";
+                
                 tr.innerHTML = `
                     <td class="py-3 font-extrabold text-cyan-200/90">${date}</td>
                     <td class="py-3 text-center text-indigo-300 font-extrabold">${sleepText}</td>
                     <td class="py-3 text-center text-cyan-300 font-extrabold">${studyText}</td>
                     <td class="py-3 text-right text-indigo-400 font-black">+${expGained} EXP</td>
+                    <td class="py-3 text-center">
+                        <button class="delete-log-btn text-rose-400 hover:text-rose-300 p-1.5 rounded-md hover:bg-slate-950/40 transition-all active:scale-90 cursor-pointer" data-date="${date}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                        </button>
+                    </td>
                 `;
                 tableBody.appendChild(tr);
             });
+
+            // ゴミ箱削除イベントの紐付け
+            tableBody.querySelectorAll('.delete-log-btn').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.currentTarget;
+                    if (!targetBtn) return;
+                    const dateToDelete = targetBtn.getAttribute('data-date');
+                    if (dateToDelete) {
+                        deleteLog(dateToDelete);
+                    }
+                });
+            });
         }
 
-        /* ----------------------------------------------------
-           8. 水中泡背景エフェクトの生成
-           ---------------------------------------------------- */
-        function createAquariumBubbles(): void {
+        function createAquariumBubbles() {
             const container = document.getElementById('bubble-bg');
             if (!container) return;
 
-            // 定期的に泡をふわふわと湧き上がらせる
             setInterval(() => {
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
-                const size = Math.random() * 15 + 5; // 5px ~ 20px
+                const size = Math.random() * 15 + 5; 
                 bubble.style.width = `${size}px`;
                 bubble.style.height = `${size}px`;
                 bubble.style.left = `${Math.random() * 100}vw`;
-                bubble.style.animationDuration = `${Math.random() * 8 + 6}s`; // 6s ~ 14s
+                bubble.style.animationDuration = `${Math.random() * 8 + 6}s`; 
                 container.appendChild(bubble);
 
-                // アニメーション完了後に削除
                 setTimeout(() => {
                     bubble.remove();
                 }, 14000);
-            }, 1200);
+            }, 1500);
         }
 
-        /* ----------------------------------------------------
-           9. ヘルパー関数 & 初期設定
-           ---------------------------------------------------- */
-        function getTodayString(): string {
+        function getTodayString() {
             const now = new Date();
             const month = (now.getMonth() + 1).toString().padStart(2, '0');
             const date = now.getDate().toString().padStart(2, '0');
             return `${month}/${date}`;
         }
 
-        function showToast(message: string): void {
+        function showToast(message) {
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toast-text');
             if (!toast || !toastText) return;
@@ -1196,26 +1306,30 @@
             }, 3000);
         }
 
-        // イベントバインディング
-        document.getElementById('btn-timer-toggle')?.addEventListener('click', toggleTimer);
-        document.getElementById('btn-timer-reset')?.addEventListener('click', resetTimer);
-        btnSleepStart?.addEventListener('click', handleSleepStart);
-        btnSleepEnd?.addEventListener('click', handleSleepEnd);
+        // イベントリスナーの一括安全バインド
+        function initializeEvents() {
+            document.getElementById('btn-timer-toggle')?.addEventListener('click', toggleTimer);
+            document.getElementById('btn-timer-reset')?.addEventListener('click', resetTimer);
+            
+            document.getElementById('btn-sleep-start')?.addEventListener('click', handleSleepStart);
+            document.getElementById('btn-sleep-end')?.addEventListener('click', handleSleepEnd);
 
-        // ナビゲーションハンドラー
-        document.getElementById('nav-home')?.addEventListener('click', () => switchPage('home'));
-        document.getElementById('nav-study')?.addEventListener('click', () => switchPage('study'));
-        document.getElementById('nav-sleep')?.addEventListener('click', () => switchPage('sleep'));
-        document.getElementById('nav-graph')?.addEventListener('click', () => switchPage('graph'));
+            document.getElementById('form-manual-sleep')?.addEventListener('submit', handleManualSleepSubmit);
 
-        // アプリケーション起動
-        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('nav-home')?.addEventListener('click', () => switchPage('home'));
+            document.getElementById('nav-study')?.addEventListener('click', () => switchPage('study'));
+            document.getElementById('nav-sleep')?.addEventListener('click', () => switchPage('sleep'));
+            document.getElementById('nav-graph')?.addEventListener('click', () => switchPage('graph'));
+        }
+
+        // アプリ起動時のライフサイクル
+        window.addEventListener('load', () => {
             loadState();
+            initializeEvents();
             initSleepUI();
             updateHomeUI();
             updateTimerDisplay();
             createAquariumBubbles();
-            if (typeof lucide !== 'undefined') lucide.createIcons();
         });
     </script>
 </body>
