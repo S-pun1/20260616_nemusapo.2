@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ネムサポ | 深海アクアリウム睡眠＆勉強アプリ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts (Rounded Sans-serif) -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1C:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <!-- Babel for inline TypeScript compile -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1C', sans-serif;
+            background: linear-gradient(180deg, #0f1c3f 0%, #050b1a 100%);
+            min-height: 100vh;
+            color: #e2e8f0; /* 目に優しい淡いグレー */
+        }
+        /* スムーズな画面切り替えアニメーション */
+        .page {
+            display: none;
+            animation: swimIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes swimIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        /* おやすみモード（さらに深い、静寂な最深海テーマ） */
+        .dark-mode {
+            background: linear-gradient(180deg, #040814 0%, #010307 100%) !important;
+            color: #94a3b8 !important;
+        }
+
+        /* クラゲのふわふわ・ゆらゆら浮遊アニメーション */
+        @keyframes jellyfishFloat {
+            0% { transform: translateY(0px) scale(1); }
+            40% { transform: translateY(-12px) scale(1.02) rotate(1deg); }
+            70% { transform: translateY(-2px) scale(0.98) rotate(-1deg); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        .jelly-float {
+            animation: jellyfishFloat 6s ease-in-out infinite;
+        }
+
+        /* 触手のゆらゆらアニメーション */
+        @keyframes tentacleSway {
+            0%, 100% { transform: rotate(0deg) skewX(0deg); }
+            50% { transform: rotate(4deg) skewX(3deg); }
+        }
+        .tentacle-left {
+            animation: tentacleSway 4s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+        .tentacle-mid {
+            animation: tentacleSway 5s ease-in-out infinite alternate -1s;
+            transform-origin: top center;
+        }
+        .tentacle-right {
+            animation: tentacleSway 4s ease-in-out infinite alternate -2s;
+            transform-origin: top center;
+        }
+
+        /* 泡のぷくぷくアニメーション（癒し効果） */
+        @keyframes bubbleUp {
+            0% { transform: translateY(100px) translateX(0); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle, rgba(147, 197, 253, 0.4) 0%, rgba(147, 197, 253, 0.05) 70%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            bottom: 0;
+            animation: bubbleUp 12s linear infinite;
+        }
+
+        /* レベルアップ星屑エフェクト */
+        @keyframes stardust {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        .stardust {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #7dd3fc;
+            box-shadow: 0 0 10px #38bdf8;
+            animation: stardust 3s linear forwards;
+            z-index: 100;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen transition-colors duration-1000 pb-24 overflow-x-hidden relative">
+
+    <!-- 癒しの泡エフェクト用コンテナ -->
+    <div id="bubble-bg" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- レベルアップエフェクトコンテナ -->
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+    <!-- ヘッダー -->
+    <header class="w-full max-w-md bg-slate-900/40 backdrop-blur-xl shadow-lg sticky top-0 z-40 px-5 py-4 flex justify-between items-center rounded-b-[2.5rem] transition-all duration-500 border-b border-cyan-500/10">
+        <div class="flex items-center gap-2.5">
+            <div class="bg-cyan-500/20 text-cyan-300 p-2.5 rounded-2xl shadow-inner border border-cyan-500/20 transition-colors duration-500" id="header-logo-container">
+                <i data-lucide="waves" class="w-5 h-5 animate-pulse"></i>
+            </div>
+            <span class="font-black text-xl tracking-wider text-cyan-200 transition-colors duration-500" id="header-title">ネムサポ</span>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-950/50 px-4 py-1.5 rounded-full border border-cyan-500/20 transition-colors duration-500 shadow-sm" id="header-stats">
+            <span class="text-xs font-black text-cyan-300">Lv.<span id="char-level" class="text-cyan-100">1</span></span>
+            <div class="w-16 bg-slate-800/80 h-2 rounded-full overflow-hidden">
+                <div id="char-exp-bar" class="bg-gradient-to-r from-cyan-400 to-indigo-400 h-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="w-full max-w-md px-4 py-5 flex-grow overflow-y-auto z-10">
+        
+        <!-- ==============================================
+             1. ホーム画面 (クラゲ育成 & 深海アドバイス)
+             ============================================== -->
+        <section id="page-home" class="page active">
+            <!-- キャラのステータスカード -->
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 relative overflow-hidden transition-all duration-500 card-container">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl opacity-60"></div>
+                
+                <div class="text-center">
+                    <span id="char-state-badge" class="inline-block bg-cyan-950/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/20 transition-all">
+                        ゆったり浮遊中 🌊
+                    </span>
+                    
+                    <!-- クラゲキャラクター「ジェリタ」(SVG) -->
+                    <div class="w-48 h-48 mx-auto my-3 flex items-center justify-center relative jelly-float">
+                        <svg id="jelly-svg" viewBox="0 0 200 200" class="w-full h-full filter drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                            <!-- 後ろにうっすら光るオーラ -->
+                            <circle cx="100" cy="100" r="50" fill="url(#jellyGlow)" opacity="0.3" />
+
+                            <!-- 触手 -->
+                            <g>
+                                <!-- 左の触手 -->
+                                <path class="tentacle-left" d="M 85 125 Q 75 145 85 165 T 75 185" fill="none" stroke="#7dd3fc" stroke-width="4.5" stroke-linecap="round" opacity="0.8" />
+                                <!-- 右の触手 -->
+                                <path class="tentacle-right" d="M 115 125 Q 125 145 115 165 T 125 185" fill="none" stroke="#7dd3fc" stroke-width="4.5" stroke-linecap="round" opacity="0.8" />
+                                <!-- 真ん中の触手 -->
+                                <path class="tentacle-mid" d="M 100 130 Q 105 150 95 170 T 100 190" fill="none" stroke="#c084fc" stroke-width="5" stroke-linecap="round" opacity="0.9" />
+                            </g>
+                            
+                            <!-- 体（クラゲの傘） -->
+                            <path d="M 50 115 C 50 50, 150 50, 150 115 C 150 128, 130 120, 100 128 C 70 120, 50 128, 50 115 Z" fill="url(#jellyGrad)" opacity="0.9" />
+                            <!-- 内側のフリル -->
+                            <path d="M 60 115 Q 80 122 100 115 Q 120 122 140 115" fill="none" stroke="#e0f2fe" stroke-width="3" stroke-linecap="round" opacity="0.7" />
+
+                            <!-- 顔のパーツ (通常表情) -->
+                            <g id="face-normal">
+                                <circle cx="82" cy="100" r="4.5" fill="#082f49" />
+                                <circle cx="118" cy="100" r="4.5" fill="#082f49" />
+                                <ellipse cx="78" cy="106" rx="6" ry="3.5" fill="#fda4af" opacity="0.8" />
+                                <ellipse cx="122" cy="106" rx="6" ry="3.5" fill="#fda4af" opacity="0.8" />
+                                <path d="M 96 108 Q 100 112 104 108" stroke="#082f49" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                            </g>
+                            
+                            <!-- 顔のパーツ (勉強中) -->
+                            <g id="face-study" class="hidden">
+                                <path d="M 75 97 L 87 101" stroke="#082f49" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M 125 97 L 113 101" stroke="#082f49" stroke-width="3.5" stroke-linecap="round"/>
+                                <ellipse cx="78" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
+                                <ellipse cx="122" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
+                                <line x1="94" y1="109" x2="106" y2="109" stroke="#082f49" stroke-width="3.5" stroke-linecap="round"/>
+                                <!-- 鉛筆（海草風）を持つ -->
+                                <rect x="130" y="105" width="6" height="18" rx="2.5" transform="rotate(30 130 105)" fill="#10b981" />
+                            </g>
+
+                            <!-- 顔のパーツ (すやすや眠っている) -->
+                            <g id="face-sleep" class="hidden">
+                                <path d="M 74 100 Q 82 107 90 100" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                                <path d="M 110 100 Q 118 107 126 100" stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                                <ellipse cx="75" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.6" />
+                                <ellipse cx="125" cy="107" rx="6" ry="3" fill="#fda4af" opacity="0.6" />
+                                <circle cx="100" cy="111" r="3" fill="#ffffff" opacity="0.9" />
+                                <text x="142" y="70" fill="#38bdf8" font-size="16" font-weight="900" class="animate-bounce">Z</text>
+                                <text x="154" y="55" fill="#a5b4fc" font-size="11" font-weight="900" class="animate-bounce" style="animation-delay: 0.3s">z</text>
+                            </g>
+
+                            <!-- 顔のパーツ (ウトウト) -->
+                            <g id="face-sleepy" class="hidden">
+                                <path d="M 74 103 Q 82 96 90 103" stroke="#082f49" stroke-width="3" fill="none" stroke-linecap="round" />
+                                <path d="M 110 103 Q 118 96 126 103" stroke="#082f49" stroke-width="3" fill="none" stroke-linecap="round" />
+                                <ellipse cx="78" cy="108" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
+                                <ellipse cx="122" cy="108" rx="6" ry="3" fill="#fda4af" opacity="0.8" />
+                                <path d="M 94 112 Q 100 108 106 112" stroke="#082f49" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                            </g>
+
+                            <!-- グラデーション定義 -->
+                            <defs>
+                                <linearGradient id="jellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#22d3ee" />
+                                    <stop offset="60%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.8" />
+                                </linearGradient>
+                                <radialGradient id="jellyGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#22d3ee" />
+                                    <stop offset="100%" stop-color="#22d3ee" stop-opacity="0" />
+                                </radialGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <h2 class="text-xl font-black text-cyan-100 transition-colors duration-500" id="char-name">ジェリタ</h2>
+                    <p class="text-[11px] text-cyan-300/80 mt-1 font-bold" id="char-subtext">ゆらゆら泳ぎながら君の睡眠を守るよ</p>
+                </div>
+
+                <!-- 経験値進行バー -->
+                <div class="mt-5 bg-slate-950/40 p-4 rounded-3xl border border-cyan-500/10 transition-colors duration-500" id="exp-container">
+                    <div class="flex justify-between text-xs text-cyan-400 mb-2 font-bold transition-colors duration-500" id="exp-text-container">
+                        <span>深海の成長ゲージ</span>
+                        <span><span id="current-exp">0</span> / <span id="needed-exp">100</span> EXP</span>
+                    </div>
+                    <div class="w-full bg-slate-800/60 h-2.5 rounded-full overflow-hidden">
+                        <div id="char-exp-bar-large" class="bg-gradient-to-r from-cyan-400 to-indigo-400 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ジェリタの吹き出しメッセージ -->
+            <div class="mt-5 bg-indigo-950/70 text-cyan-100 rounded-[2rem] p-5 shadow-lg relative border border-cyan-500/20">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-indigo-950/70"></div>
+                <div class="flex gap-3.5 items-start">
+                    <div class="bg-indigo-900/60 p-2.5 rounded-2xl flex-shrink-0 shadow-inner text-cyan-300 border border-cyan-500/20">
+                        <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xs text-cyan-300 uppercase tracking-wider" id="advice-header">深海のやすらぎヒント</h3>
+                        <p class="text-xs mt-1 leading-relaxed font-black" id="advice-text">
+                            ゆっくり自分のペースで大丈夫。今日もしがんばったね。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- アロマ・おすすめ習慣カード -->
+            <div class="mt-5 bg-cyan-950/50 rounded-[2rem] p-5 border border-cyan-500/20 shadow-lg transition-all duration-500" id="aroma-card">
+                <div class="flex items-start gap-3.5">
+                    <div class="bg-cyan-900/50 p-3 rounded-2xl text-cyan-300 shadow-sm border border-cyan-500/20" id="aroma-icon-container">
+                        <i data-lucide="droplet" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-[9px] text-cyan-300 font-extrabold block uppercase tracking-wider">おやすみ前のセルフケア</span>
+                        <h4 class="font-black text-cyan-100 text-sm mt-0.5" id="aroma-title">シーミントの香り</h4>
+                        <p class="text-xs text-cyan-200/90 mt-1 leading-relaxed font-bold" id="aroma-desc">
+                            心をほっと落ち着ける優しいアロマ。枕元にそっと置いてみてね。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             2. 勉強画面 (ポモドーロタイマー)
+             ============================================== -->
+        <section id="page-study" class="page">
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 text-center card-container">
+                <span id="timer-state-badge" class="inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20">
+                    アクア集中タイム (25分)
+                </span>
+
+                <!-- タイマーリング -->
+                <div class="relative w-52 h-52 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="104" cy="104" r="90" stroke="#0f172a" stroke-width="6" fill="transparent" class="transition-colors duration-500" id="timer-bg-circle"/>
+                        <circle id="timer-progress" cx="104" cy="104" r="90" stroke="#22d3ee" stroke-width="8" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0" stroke-linecap="round" class="transition-all duration-300" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="timer-time" class="text-3xl font-black text-cyan-100 tracking-wider transition-colors duration-500" id="timer-time-text">25:00</span>
+                        <span id="timer-target" class="text-[9px] text-cyan-400 mt-1 font-bold">目標: 勉強に全集中！</span>
+                    </div>
+                </div>
+
+                <p class="text-xs text-cyan-200/80 mt-6 leading-relaxed font-bold transition-colors duration-500" id="timer-subtext">
+                    25分がんばったら、5分お休みしよう。<br>ジェリタも一緒にお勉強中...✍️
+                </p>
+
+                <!-- コントロールボタン -->
+                <div class="flex justify-center gap-4 mt-8">
+                    <button id="btn-timer-reset" class="w-12 h-12 bg-slate-950/50 hover:bg-slate-900/50 text-cyan-400 rounded-full flex items-center justify-center active:scale-95 transition-all shadow-md border border-cyan-500/15">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                    <button id="btn-timer-toggle" class="px-7 h-12 bg-gradient-to-r from-cyan-500/60 to-indigo-500/60 hover:from-cyan-400 hover:to-indigo-400 text-cyan-100 font-bold rounded-full flex items-center gap-2 active:scale-95 transition-all shadow-lg border border-cyan-400/30">
+                        <i data-lucide="play" class="w-5 h-5" id="timer-play-icon"></i>
+                        <span id="timer-btn-text" class="text-sm">スタート</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 勉強応援カード -->
+            <div class="mt-5 bg-cyan-950/30 border border-cyan-500/10 rounded-[2rem] p-5 shadow-sm">
+                <div class="flex items-start gap-3.5">
+                    <div class="bg-cyan-900/40 text-cyan-300 p-2.5 rounded-2xl shadow-sm border border-cyan-500/25">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-cyan-200 text-xs">勉強を終えると...</h4>
+                        <p class="text-xs text-cyan-300/80 mt-1.5 leading-relaxed font-bold">
+                            タイマーを完了するごとに、ジェリタから **15 EXP** を手に入れることができます。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             3. 睡眠画面 (おやすみ・おはようログ)
+             ============================================== -->
+        <section id="page-sleep" class="page">
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-2xl border border-cyan-500/10 text-center transition-all duration-500 card-container" id="sleep-card">
+                
+                <div class="w-40 h-40 mx-auto mb-6 bg-slate-950/40 rounded-full flex items-center justify-center shadow-inner relative border border-cyan-500/10 transition-colors duration-500" id="sleep-visual-container">
+                    <!-- 深海にたたずむベッドのSVG -->
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-sm opacity-80">
+                        <rect x="15" y="45" width="70" height="35" rx="5" fill="#1e293b" />
+                        <rect x="20" y="30" width="30" height="20" rx="4" fill="#334155" />
+                        <rect x="50" y="30" width="30" height="20" rx="4" fill="#334155" />
+                        <path d="M 15 55 L 85 55 L 85 80 L 15 80 Z" fill="#0369a1" rx="5" />
+                        <path d="M 15 55 L 85 55 L 85 62 L 15 62 Z" fill="#0ea5e9" />
+                    </svg>
+                </div>
+
+                <h3 class="text-xl font-black text-cyan-100 transition-colors duration-500" id="sleep-title">すやすや深海測定</h3>
+                <p class="text-xs text-cyan-300/80 mt-2 max-w-xs mx-auto font-bold leading-relaxed transition-colors duration-500" id="sleep-guide-text">
+                    お布団に入る瞬間に「おやすみ」をタップ。<br>起きたら「おはよう」を押してね。
+                </p>
+
+                <!-- メイン操作エリア -->
+                <div class="mt-8 flex flex-col items-center gap-4">
+                    <div id="sleep-status-text" class="text-xs font-black text-cyan-300 bg-cyan-950/60 px-4 py-2 rounded-full shadow-sm hidden border border-cyan-500/20">
+                        現在すやすや眠っています... 💤
+                    </div>
+
+                    <!-- おやすみボタン -->
+                    <button id="btn-sleep-start" class="w-full py-3.5 bg-gradient-to-r from-indigo-500/50 to-cyan-500/50 hover:from-indigo-400 hover:to-cyan-400 text-cyan-100 font-black rounded-2xl shadow-lg border border-cyan-500/25 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                        <span>おやすみ (ベッドに入る)</span>
+                    </button>
+
+                    <!-- おはようボタン -->
+                    <button id="btn-sleep-end" class="w-full py-3.5 bg-gradient-to-r from-amber-500/50 to-yellow-500/50 hover:from-amber-400 hover:to-yellow-400 text-slate-900 font-black rounded-2xl shadow-lg border border-yellow-400/30 flex items-center justify-center gap-2 active:scale-[0.98] transition-all hidden animate-pulse">
+                        <i data-lucide="sun" class="w-5 h-5"></i>
+                        <span>おはよう！ (目が覚めた)</span>
+                    </button>
+                </div>
+
+                <!-- 昨夜の記録 -->
+                <div class="mt-8 border-t border-cyan-500/10 pt-6 flex justify-around text-center transition-colors duration-500" id="last-sleep-summary">
+                    <div>
+                        <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">昨日の就寝</span>
+                        <span id="summary-bedtime" class="font-black text-sm text-cyan-100 transition-colors duration-500">-:--</span>
+                    </div>
+                    <div class="border-l border-cyan-500/10 h-8 self-center transition-colors duration-500" id="summary-divider-1"></div>
+                    <div>
+                        <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">起床時間</span>
+                        <span id="summary-waketime" class="font-black text-sm text-cyan-100 transition-colors duration-500">-:--</span>
+                    </div>
+                    <div class="border-l border-cyan-500/10 h-8 self-center transition-colors duration-500" id="summary-divider-2"></div>
+                    <div>
+                        <span class="text-[9px] text-cyan-400 block font-bold uppercase tracking-wider">睡眠時間</span>
+                        <span id="summary-duration" class="font-black text-sm text-cyan-300 transition-colors duration-500">-:--</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             4. グラフ画面 (睡眠×勉強 相関分析)
+             ============================================== -->
+        <section id="page-graph" class="page">
+            <div class="bg-cyan-950/30 border border-cyan-500/10 rounded-[2rem] p-5 mb-5 shadow-sm">
+                <div class="flex gap-3.5">
+                    <div class="bg-slate-900/60 text-cyan-300 p-2.5 rounded-2xl flex-shrink-0 shadow-sm border border-cyan-500/10">
+                        <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-cyan-200 text-xs">すやすやグラフの解説</h4>
+                        <p class="text-xs text-cyan-300/80 mt-1 leading-relaxed font-bold">
+                            たくさん寝た日ほど、あたまがスッキリして勉強に集中できるようになるよ。じぶんのリズムを確かめてみよう！
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 相関グラフエリア -->
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-5 shadow-2xl border border-cyan-500/10 mb-5 card-container">
+                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs transition-colors duration-500" id="graph-title">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
+                    今週のデータ（睡眠 vs 勉強時間）
+                </h4>
+                <div class="w-full h-64 relative">
+                    <canvas id="correlation-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- 個別データのまとめ -->
+            <div class="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-5 shadow-2xl border border-cyan-500/10 card-container">
+                <h4 class="font-black text-cyan-200 mb-4 flex items-center gap-2 text-xs transition-colors duration-500" id="table-title">
+                    <i data-lucide="history" class="w-4 h-4 text-cyan-400"></i>
+                    直近の記録データ一覧
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-cyan-500/10 text-cyan-400 font-bold transition-colors duration-500" id="table-header-row">
+                                <th class="py-2.5">日付</th>
+                                <th class="py-2.5 text-center">睡眠</th>
+                                <th class="py-2.5 text-center">勉強</th>
+                                <th class="py-2.5 text-right">獲得</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body" class="font-bold text-cyan-100">
+                            <!-- JSによって行が挿入されます -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ボトムナビゲーション -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-950/80 backdrop-blur-xl border-t border-cyan-500/10 shadow-2xl px-6 py-2.5 flex justify-between items-center rounded-t-[2.5rem] z-40">
+        <button id="nav-home" class="flex flex-col items-center gap-1 text-cyan-400 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
+            <i data-lucide="home" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black">相棒</span>
+        </button>
+        <button id="nav-study" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black">勉強</span>
+        </button>
+        <button id="nav-sleep" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
+            <i data-lucide="moon" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black">睡眠</span>
+        </button>
+        <button id="nav-graph" class="flex flex-col items-center gap-1 text-slate-500 transition-colors py-1.5 px-3.5 rounded-2xl active:bg-slate-900/50">
+            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black">分析</span>
+        </button>
+    </nav>
+
+    <!-- アラートトースター -->
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-950/90 text-cyan-100 text-[11px] font-black px-5 py-3 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-cyan-500/20">
+        <i data-lucide="info" class="w-4 h-4 text-cyan-300" id="toast-icon"></i>
+        <span id="toast-text">メッセージ</span>
+    </div>
+
+    <!-- ==============================================
+         TypeScript による強固なアプリケーションロジック
+         ============================================== -->
+    <script type="text/typescript">
+        /* ----------------------------------------------------
+           1. 厳格な型定義 (TypeScript Interfaces & Types)
+           ---------------------------------------------------- */
+        interface CharState {
+            name: string;
+            level: number;
+            exp: number;
+            neededExp: number;
+        }
+
+        interface SleepLog {
+            date: string;       // 形式: "MM/DD"
+            bedtime: string;    // 形式: "HH:MM"
+            waketime: string;   // 形式: "HH:MM"
+            duration: number;   // 時間単位 (h)
+        }
+
+        interface StudyLog {
+            date: string;       // 形式: "MM/DD"
+            durationMinutes: number;
+        }
+
+        interface AppState {
+            char: CharState;
+            sleepLogs: SleepLog[];
+            studyLogs: StudyLog[];
+            currentSleepStart: string | null; // ISOString
+            currentStudyStart: string | null; // ISOString
+        }
+
+        interface RoutineAdvice {
+            title: string;
+            desc: string;
+            level: number;
+            type: 'aroma' | 'stretch' | 'habit';
+        }
+
+        type CharacterFace = 'normal' | 'study' | 'sleep' | 'sleepy';
+
+        /* ----------------------------------------------------
+           2. アプリケーション状態 (Initial State & LocalStorage)
+           ---------------------------------------------------- */
+        const STORAGE_KEY: string = 'nemusapo_data_aquarium';
+        
+        let appState: AppState = {
+            char: {
+                name: 'ジェリタ',
+                level: 1,
+                exp: 0,
+                neededExp: 100
+            },
+            sleepLogs: [],
+            studyLogs: [],
+            currentSleepStart: null,
+            currentStudyStart: null
+        };
+
+        // デモ用 初期表示用ダミーデータ
+        const mockSleepLogs: SleepLog[] = [
+            { date: '06/03', bedtime: '23:45', waketime: '06:15', duration: 6.5 },
+            { date: '06/04', bedtime: '00:15', waketime: '06:30', duration: 6.25 },
+            { date: '06/05', bedtime: '22:30', waketime: '07:30', duration: 9.0 },
+            { date: '06/06', bedtime: '23:00', waketime: '07:30', duration: 8.5 },
+            { date: '06/07', bedtime: '01:00', waketime: '06:00', duration: 5.0 },
+            { date: '06/08', bedtime: '22:45', waketime: '07:15', duration: 8.5 },
+        ];
+
+        const mockStudyLogs: StudyLog[] = [
+            { date: '06/03', durationMinutes: 50 },
+            { date: '06/04', durationMinutes: 25 },
+            { date: '06/05', durationMinutes: 100 },
+            { date: '06/06', durationMinutes: 75 },
+            { date: '06/07', durationMinutes: 25 },
+            { date: '06/08', durationMinutes: 120 },
+        ];
+
+        function loadState(): void {
+            const saved: string | null = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved) as AppState;
+                    appState = {
+                        char: parsed.char || appState.char,
+                        sleepLogs: parsed.sleepLogs || [],
+                        studyLogs: parsed.studyLogs || [],
+                        currentSleepStart: parsed.currentSleepStart || null,
+                        currentStudyStart: parsed.currentStudyStart || null
+                    };
+                } catch(e) {
+                    console.error("データの読み込みに失敗しました", e);
+                }
+            } else {
+                appState.sleepLogs = [...mockSleepLogs];
+                appState.studyLogs = [...mockStudyLogs];
+                saveState();
+            }
+        }
+
+        function saveState(): void {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        }
+
+        /* ----------------------------------------------------
+           3. 画面コントロール (Routing)
+           ---------------------------------------------------- */
+        function switchPage(pageId: 'home' | 'study' | 'sleep' | 'graph'): void {
+            document.querySelectorAll('.page').forEach((page: Element) => {
+                page.classList.remove('active');
+            });
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.add('active');
+
+            const navIds: ('home' | 'study' | 'sleep' | 'graph')[] = ['home', 'study', 'sleep', 'graph'];
+            navIds.forEach((id) => {
+                const navBtn = document.getElementById(`nav-${id}`);
+                if (navBtn) {
+                    if (id === pageId) {
+                        navBtn.classList.remove('text-slate-500');
+                        navBtn.classList.add('text-cyan-400');
+                    } else {
+                        navBtn.classList.remove('text-cyan-400');
+                        navBtn.classList.add('text-slate-500');
+                    }
+                }
+            });
+
+            if (pageId === 'home') {
+                updateHomeUI();
+            } else if (pageId === 'graph') {
+                renderCharts();
+                updateDataTable();
+            }
+        }
+
+        function changeCharacterFace(state: CharacterFace): void {
+            const faces: CharacterFace[] = ['normal', 'study', 'sleep', 'sleepy'];
+            faces.forEach((face: CharacterFace) => {
+                const faceGroup = document.getElementById(`face-${face}`);
+                if (faceGroup) {
+                    if (face === state) {
+                        faceGroup.classList.remove('hidden');
+                    } else {
+                        faceGroup.classList.add('hidden');
+                    }
+                }
+            });
+
+            const badge = document.getElementById('char-state-badge');
+            if (badge) {
+                switch(state) {
+                    case 'study':
+                        badge.innerText = 'お勉強中 ✍️';
+                        badge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-teal-500/20";
+                        break;
+                    case 'sleep':
+                        badge.innerText = 'すやすや... 💤';
+                        badge.className = "inline-block bg-indigo-950/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/20";
+                        break;
+                    case 'sleepy':
+                        badge.innerText = 'ウトウト... 🥱';
+                        badge.className = "inline-block bg-amber-950/60 text-amber-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-amber-500/20";
+                        break;
+                    default:
+                        badge.innerText = 'のんびり中 🍀';
+                        badge.className = "inline-block bg-slate-900/60 text-cyan-300 text-xs px-4 py-1.5 rounded-full font-black mb-4 tracking-wider shadow-sm border border-cyan-500/10";
+                }
+            }
+        }
+
+        /* ----------------------------------------------------
+           4. ホーム画面 & 安眠コンテンツ (海・水槽テーマ)
+           ---------------------------------------------------- */
+        const sleepRoutines: RoutineAdvice[] = [
+            { title: "マリンフォレストの香り", desc: "深みのある海辺の森をイメージ。自律神経を静かに整えて睡眠の質を高めるよ。枕元にそっと香らせてね。", level: 1, type: 'aroma' },
+            { title: "オレンジと海のブレンド", desc: "みずみずしい柑橘と潮風のような穏やかな香りが、勉強での頭の使いすぎをリセットするよ。", level: 1, type: 'aroma' },
+            { title: "波のさざなみ深呼吸", desc: "波の満ち引きをイメージして呼吸。4秒で吸い込み、海に溶けるように8秒かけてゆっくり吐き出そう。", level: 2, type: 'stretch' },
+            { title: "深海ブルーカモミール", desc: "リンゴのような甘さと、ハーブの深い青が引き出す究極の安らぎ。一日の肩の荷をふわっと下ろしてくれます。", level: 3, type: 'aroma' },
+            { title: "クラゲのゆったり浮遊瞑想", desc: "布団の上で手足を軽く投げ出し、自分が水の中にぷかぷかと浮いているように全身の力を抜き切ろう。", level: 4, type: 'stretch' },
+            { title: "深海の静寂ストレッチ", desc: "仰向けで両手を上に伸ばしてぐーっと伸びをしてから、すとんと脱力。血流がスムーズになり、眠りを誘うよ。", level: 5, type: 'stretch' },
+        ];
+
+        function getRoutineAdvice(level: number): RoutineAdvice {
+            const available = sleepRoutines.filter((r) => r.level <= level);
+            const index = Math.floor(Math.random() * available.length);
+            return available[index];
+        }
+
+        function updateHomeUI(): void {
+            const levelEl = document.getElementById('char-level');
+            const expBarEl = document.getElementById('char-exp-bar');
+            const expBarLargeEl = document.getElementById('char-exp-bar-large');
+            const currentExpEl = document.getElementById('current-exp');
+            const neededExpEl = document.getElementById('needed-exp');
+
+            if (levelEl) levelEl.innerText = appState.char.level.toString();
+            
+            const expPercent = (appState.char.exp / appState.char.neededExp) * 100;
+            if (expBarEl) expBarEl.style.width = `${expPercent}%`;
+            if (expBarLargeEl) expBarLargeEl.style.width = `${expPercent}%`;
+            if (currentExpEl) currentExpEl.innerText = appState.char.exp.toString();
+            if (neededExpEl) neededExpEl.innerText = appState.char.neededExp.toString();
+
+            if (appState.currentSleepStart) {
+                changeCharacterFace('sleep');
+            } else if (appState.currentStudyStart) {
+                changeCharacterFace('study');
+            } else {
+                const hour = new Date().getHours();
+                if (hour >= 20 || hour < 6) {
+                    changeCharacterFace('sleepy');
+                } else {
+                    changeCharacterFace('normal');
+                }
+            }
+
+            const hour = new Date().getHours();
+            const adviceText = document.getElementById('advice-text');
+            const aromaCard = document.getElementById('aroma-card');
+
+            if (hour >= 19 || hour < 5) {
+                if (adviceText) {
+                    adviceText.innerText = "そろそろ深海の静けさを感じながらお布団に入ろう。スマホの光を遮るだけで、深海のような穏やかな夢が見られるよ。";
+                }
+                const routine = getRoutineAdvice(appState.char.level);
+                const aromaTitleEl = document.getElementById('aroma-title');
+                const aromaDescEl = document.getElementById('aroma-desc');
+                const aromaIconContainer = document.getElementById('aroma-icon-container');
+                
+                if (aromaTitleEl) aromaTitleEl.innerText = routine.title;
+                if (aromaDescEl) aromaDescEl.innerText = routine.desc;
+                
+                if (aromaIconContainer) {
+                    if (routine.type === 'stretch') {
+                        aromaIconContainer.innerHTML = `<i data-lucide="accessibility" class="w-5 h-5"></i>`;
+                        aromaIconContainer.className = "bg-teal-900/50 p-3 rounded-2xl text-teal-300 shadow-sm border border-teal-500/20";
+                    } else {
+                        aromaIconContainer.innerHTML = `<i data-lucide="droplet" class="w-5 h-5"></i>`;
+                        aromaIconContainer.className = "bg-cyan-900/50 p-3 rounded-2xl text-cyan-300 shadow-sm border border-cyan-500/20";
+                    }
+                }
+                
+                if (aromaCard) aromaCard.classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } else {
+                if (adviceText) {
+                    adviceText.innerText = "おはよう！朝の光をたくさん受けて、頭を起こそうね。夜の心地よい「すやすや習慣」は朝の光から始まっているよ。";
+                }
+                if (aromaCard) aromaCard.classList.add('hidden');
+            }
+        }
+
+        function addExperience(amount: number): void {
+            appState.char.exp += amount;
+            showToast(`ジェリタが ${amount} EXP を吸収しました！🫧`);
+            
+            if (appState.char.exp >= appState.char.neededExp) {
+                appState.char.level += 1;
+                appState.char.exp = appState.char.exp - appState.char.neededExp;
+                appState.char.neededExp = Math.floor(appState.char.neededExp * 1.2);
+                
+                triggerLevelUpEffect();
+                showToast(`🎉 深海のレベルアップ！ Lv.${appState.char.level} に成長しました！`);
+            }
+            saveState();
+            updateHomeUI();
+        }
+
+        function triggerLevelUpEffect(): void {
+            const container = document.getElementById('confetti-container');
+            if (!container) return;
+
+            // 星屑のようにきらめくブルーの演出
+            for (let i = 0; i < 35; i++) {
+                const star = document.createElement('div');
+                star.className = 'stardust';
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDelay = `${Math.random() * 0.4}s`;
+                star.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
+                container.appendChild(star);
+
+                setTimeout(() => star.remove(), 3000);
+            }
+        }
+
+        /* ----------------------------------------------------
+           5. ポモドーロタイマーの実装 (Timer)
+           ---------------------------------------------------- */
+        let timerInterval: number | null = null;
+        const STUDY_DURATION: number = 25 * 60; 
+        const BREAK_DURATION: number = 5 * 60;  
+        let currentTimerTime: number = STUDY_DURATION;
+        let isTimerRunning: boolean = false;
+        let isBreakMode: boolean = false;
+
+        const timerProgressCircle = document.getElementById('timer-progress') as SVGCircleElement | null;
+        const timerTimeText = document.getElementById('timer-time');
+        const timerBtnText = document.getElementById('timer-btn-text');
+        const timerPlayIcon = document.getElementById('timer-play-icon');
+        const timerStateBadge = document.getElementById('timer-state-badge');
+
+        function updateTimerDisplay(): void {
+            const minutes = Math.floor(currentTimerTime / 60);
+            const seconds = currentTimerTime % 60;
+            if (timerTimeText) {
+                timerTimeText.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            if (timerProgressCircle) {
+                const totalDuration = isBreakMode ? BREAK_DURATION : STUDY_DURATION;
+                const progress = (currentTimerTime / totalDuration) * 565.48;
+                timerProgressCircle.style.strokeDashoffset = progress.toString();
+            }
+        }
+
+        function toggleTimer(): void {
+            if (isTimerRunning) {
+                if (timerInterval) clearInterval(timerInterval);
+                isTimerRunning = false;
+                if (timerBtnText) timerBtnText.innerText = "再開";
+                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+                appState.currentStudyStart = null;
+                saveState();
+                changeCharacterFace('normal');
+            } else {
+                isTimerRunning = true;
+                if (timerBtnText) timerBtnText.innerText = "小休止";
+                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'pause');
+                
+                if (!isBreakMode) {
+                    appState.currentStudyStart = new Date().toISOString();
+                    saveState();
+                    changeCharacterFace('study');
+                }
+
+                timerInterval = window.setInterval(() => {
+                    if (currentTimerTime > 0) {
+                        currentTimerTime--;
+                        updateTimerDisplay();
+                    } else {
+                        if (timerInterval) clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        handleTimerComplete();
+                    }
+                }, 1000);
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function resetTimer(): void {
+            if (timerInterval) clearInterval(timerInterval);
+            isTimerRunning = false;
+            isBreakMode = false;
+            currentTimerTime = STUDY_DURATION;
+            
+            if (timerStateBadge) {
+                timerStateBadge.innerText = "アクア集中タイム (25分)";
+                timerStateBadge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20";
+            }
+            if (timerBtnText) timerBtnText.innerText = "スタート";
+            if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+            
+            appState.currentStudyStart = null;
+            saveState();
+            changeCharacterFace('normal');
+            updateTimerDisplay();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function handleTimerComplete(): void {
+            if (!isBreakMode) {
+                showToast("集中お疲れ様！がんばったね、素晴らしいよ！🌿");
+                
+                const todayStr = getTodayString();
+                const existingLog = appState.studyLogs.find((l) => l.date === todayStr);
+                if (existingLog) {
+                    existingLog.durationMinutes += 25;
+                } else {
+                    appState.studyLogs.push({ date: todayStr, durationMinutes: 25 });
+                }
+
+                addExperience(15); 
+
+                isBreakMode = true;
+                currentTimerTime = BREAK_DURATION;
+                if (timerStateBadge) {
+                    timerStateBadge.innerText = "波の休憩タイム (5分)";
+                    timerStateBadge.className = "inline-block bg-sky-950/60 text-sky-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-sky-500/20";
+                }
+                if (timerBtnText) timerBtnText.innerText = "休憩する";
+                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'coffee');
+                changeCharacterFace('normal');
+            } else {
+                showToast("リフレッシュ完了！次の海へ漕ぎ出そう。");
+                isBreakMode = false;
+                currentTimerTime = STUDY_DURATION;
+                if (timerStateBadge) {
+                    timerStateBadge.innerText = "アクア集中タイム (25分)";
+                    timerStateBadge.className = "inline-block bg-teal-950/60 text-teal-300 text-xs px-4 py-1.5 rounded-full font-black mb-6 tracking-wide shadow-sm border border-teal-500/20";
+                }
+                if (timerBtnText) timerBtnText.innerText = "スタート";
+                if (timerPlayIcon) timerPlayIcon.setAttribute('data-lucide', 'play');
+            }
+            updateTimerDisplay();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        /* ----------------------------------------------------
+           6. 睡眠ログの実装 (Sleep System)
+           ---------------------------------------------------- */
+        const btnSleepStart = document.getElementById('btn-sleep-start') as HTMLButtonElement | null;
+        const btnSleepEnd = document.getElementById('btn-sleep-end') as HTMLButtonElement | null;
+        const sleepStatusText = document.getElementById('sleep-status-text');
+
+        function initSleepUI(): void {
+            const header = document.querySelector('header');
+            const headerTitle = document.getElementById('header-title');
+            const cards = document.querySelectorAll('.card-container');
+
+            if (appState.currentSleepStart) {
+                if (btnSleepStart) btnSleepStart.classList.add('hidden');
+                if (btnSleepEnd) btnSleepEnd.classList.remove('hidden');
+                if (sleepStatusText) sleepStatusText.classList.remove('hidden');
+                document.body.classList.add('dark-mode');
+                
+                if (header) header.classList.add('bg-slate-950/60', 'border-slate-900/50');
+                if (header) header.classList.remove('bg-slate-900/40');
+                if (headerTitle) headerTitle.classList.add('text-indigo-300');
+                if (headerTitle) headerTitle.classList.remove('text-cyan-200');
+                
+                cards.forEach((c) => {
+                    c.classList.add('bg-slate-950/30', 'border-indigo-500/10', 'text-slate-100');
+                    c.classList.remove('bg-slate-900/50', 'text-cyan-100');
+                });
+            } else {
+                if (btnSleepStart) btnSleepStart.classList.remove('hidden');
+                if (btnSleepEnd) btnSleepEnd.classList.add('hidden');
+                if (sleepStatusText) sleepStatusText.classList.add('hidden');
+                document.body.classList.remove('dark-mode');
+
+                if (header) header.classList.remove('bg-slate-950/60', 'border-slate-900/50');
+                if (header) header.classList.add('bg-slate-900/40');
+                if (headerTitle) headerTitle.classList.remove('text-indigo-300');
+                if (headerTitle) headerTitle.classList.add('text-cyan-200');
+
+                cards.forEach((c) => {
+                    c.classList.remove('bg-slate-950/30', 'border-indigo-500/10', 'text-slate-100');
+                    c.classList.add('bg-slate-900/50', 'text-cyan-100');
+                });
+            }
+            updateSleepSummaryDisplay();
+        }
+
+        function handleSleepStart(): void {
+            appState.currentSleepStart = new Date().toISOString();
+            saveState();
+            initSleepUI();
+            changeCharacterFace('sleep');
+            showToast("おやすみなさい。画面を伏せて、海のような深い安らぎを。💤");
+        }
+
+        function handleSleepEnd(): void {
+            if (!appState.currentSleepStart) return;
+
+            const sleepTime = new Date(appState.currentSleepStart);
+            const wakeTime = new Date();
+            
+            const diffMs = wakeTime.getTime() - sleepTime.getTime();
+            const diffHours = parseFloat((diffMs / (1000 * 60 * 60)).toFixed(2));
+
+            if (diffHours < 0.001) {
+                showToast("測定時間が短すぎたため、記録されなかったよ。");
+                appState.currentSleepStart = null;
+                saveState();
+                initSleepUI();
+                return;
+            }
+
+            const pad = (num: number): string => num.toString().padStart(2, '0');
+            const bedtimeStr = `${pad(sleepTime.getHours())}:${pad(sleepTime.getMinutes())}`;
+            const waketimeStr = `${pad(wakeTime.getHours())}:${pad(wakeTime.getMinutes())}`;
+            const todayStr = getTodayString();
+
+            const newLog: SleepLog = {
+                date: todayStr,
+                bedtime: bedtimeStr,
+                waketime: waketimeStr,
+                duration: diffHours
+            };
+
+            const index = appState.sleepLogs.findIndex((l) => l.date === todayStr);
+            if (index !== -1) {
+                appState.sleepLogs[index] = newLog;
+            } else {
+                appState.sleepLogs.push(newLog);
+            }
+
+            let expEarned = 30;
+            if (diffHours >= 7 && diffHours <= 9) {
+                expEarned += 20; 
+                showToast("理想的な睡眠時間をクリア！深海ボーナス +20 EXP！");
+            } else {
+                showToast("睡眠を記録したよ！おはよう！✨");
+            }
+
+            appState.currentSleepStart = null;
+            saveState();
+            initSleepUI();
+            addExperience(expEarned);
+        }
+
+        function updateSleepSummaryDisplay(): void {
+            const summaryBedtime = document.getElementById('summary-bedtime');
+            const summaryWaketime = document.getElementById('summary-waketime');
+            const summaryDuration = document.getElementById('summary-duration');
+
+            if (appState.sleepLogs.length > 0) {
+                const lastLog = appState.sleepLogs[appState.sleepLogs.length - 1];
+                if (summaryBedtime) summaryBedtime.innerText = lastLog.bedtime;
+                if (summaryWaketime) summaryWaketime.innerText = lastLog.waketime;
+                if (summaryDuration) summaryDuration.innerText = `${lastLog.duration.toFixed(1)}h`;
+            } else {
+                if (summaryBedtime) summaryBedtime.innerText = "-:--";
+                if (summaryWaketime) summaryWaketime.innerText = "-:--";
+                if (summaryDuration) summaryDuration.innerText = "-:--";
+            }
+        }
+
+        /* ----------------------------------------------------
+           7. グラフ描画とデータ一覧 (Chart.js & Visualization)
+           ---------------------------------------------------- */
+        let correlationChart: Chart | null = null;
+
+        function renderCharts(): void {
+            const canvas = document.getElementById('correlation-chart') as HTMLCanvasElement | null;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+            
+            const dates: string[] = [];
+            const sleepData: number[] = [];
+            const studyData: number[] = [];
+
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const dateStr = `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+                dates.push(dateStr);
+                
+                const sleep = appState.sleepLogs.find((l) => l.date === dateStr);
+                const study = appState.studyLogs.find((l) => l.date === dateStr);
+
+                sleepData.push(sleep ? sleep.duration : 0);
+                studyData.push(study ? parseFloat((study.durationMinutes / 60).toFixed(1)) : 0);
+            }
+
+            if (correlationChart) {
+                correlationChart.destroy();
+            }
+
+            // チャートのフォント＆線の色もアクアトーンに統一
+            correlationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'すやすや睡眠 (時間)',
+                            data: sleepData,
+                            backgroundColor: 'rgba(99, 102, 241, 0.45)', // パステルインディゴ
+                            borderColor: '#818cf8',
+                            borderWidth: 1.5,
+                            borderRadius: 8,
+                            yAxisID: 'y-sleep'
+                        },
+                        {
+                            label: 'しっかり勉強 (時間)',
+                            data: studyData,
+                            backgroundColor: 'rgba(34, 211, 238, 0.4)', // パステルシアン
+                            borderColor: '#22d3ee',
+                            borderWidth: 2.5,
+                            borderRadius: 8,
+                            yAxisID: 'y-study',
+                            type: 'line',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'M PLUS Rounded 1C', sans-serif",
+                                    weight: 'bold',
+                                    size: 10
+                                },
+                                color: '#94a3b8'
+                            }
+                        }
+                    },
+                    scales: {
+                        'y-sleep': {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '睡眠 (h)',
+                                font: { weight: 'bold', family: "'M PLUS Rounded 1C', sans-serif", size: 10 },
+                                color: '#94a3b8'
+                            },
+                            min: 0,
+                            max: 12,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: { color: '#94a3b8', font: { size: 9 } }
+                        },
+                        'y-study': {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '勉強 (h)',
+                                font: { weight: 'bold', family: "'M PLUS Rounded 1C', sans-serif", size: 10 },
+                                color: '#94a3b8'
+                            },
+                            min: 0,
+                            max: 5,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: { color: '#94a3b8', font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDataTable(): void {
+            const tableBody = document.getElementById('data-table-body');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            const allDates = [...new Set([
+                ...appState.sleepLogs.map((l) => l.date),
+                ...appState.studyLogs.map((l) => l.date)
+            ])].sort().reverse().slice(0, 5);
+
+            if (allDates.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500 font-bold text-xs">まだ記録がありません ☕️</td></tr>`;
+                return;
+            }
+
+            allDates.forEach((date) => {
+                const sleep = appState.sleepLogs.find((l) => l.date === date);
+                const study = appState.studyLogs.find((l) => l.date === date);
+
+                const sleepText = sleep ? `${sleep.duration.toFixed(1)}h` : '-';
+                const studyText = study ? `${(study.durationMinutes / 60).toFixed(1)}h` : '-';
+                
+                let expGained = 0;
+                if (sleep) expGained += (sleep.duration >= 7 && sleep.duration <= 9) ? 50 : 30;
+                if (study) expGained += Math.floor(study.durationMinutes / 25) * 15;
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-cyan-500/5 hover:bg-slate-900/30 transition-colors duration-200";
+                tr.innerHTML = `
+                    <td class="py-3 font-extrabold text-cyan-200/90">${date}</td>
+                    <td class="py-3 text-center text-indigo-300 font-extrabold">${sleepText}</td>
+                    <td class="py-3 text-center text-cyan-300 font-extrabold">${studyText}</td>
+                    <td class="py-3 text-right text-indigo-400 font-black">+${expGained} EXP</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        /* ----------------------------------------------------
+           8. 水中泡背景エフェクトの生成
+           ---------------------------------------------------- */
+        function createAquariumBubbles(): void {
+            const container = document.getElementById('bubble-bg');
+            if (!container) return;
+
+            // 定期的に泡をふわふわと湧き上がらせる
+            setInterval(() => {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 15 + 5; // 5px ~ 20px
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}vw`;
+                bubble.style.animationDuration = `${Math.random() * 8 + 6}s`; // 6s ~ 14s
+                container.appendChild(bubble);
+
+                // アニメーション完了後に削除
+                setTimeout(() => {
+                    bubble.remove();
+                }, 14000);
+            }, 1200);
+        }
+
+        /* ----------------------------------------------------
+           9. ヘルパー関数 & 初期設定
+           ---------------------------------------------------- */
+        function getTodayString(): string {
+            const now = new Date();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const date = now.getDate().toString().padStart(2, '0');
+            return `${month}/${date}`;
+        }
+
+        function showToast(message: string): void {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            if (!toast || !toastText) return;
+
+            toastText.innerText = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // イベントバインディング
+        document.getElementById('btn-timer-toggle')?.addEventListener('click', toggleTimer);
+        document.getElementById('btn-timer-reset')?.addEventListener('click', resetTimer);
+        btnSleepStart?.addEventListener('click', handleSleepStart);
+        btnSleepEnd?.addEventListener('click', handleSleepEnd);
+
+        // ナビゲーションハンドラー
+        document.getElementById('nav-home')?.addEventListener('click', () => switchPage('home'));
+        document.getElementById('nav-study')?.addEventListener('click', () => switchPage('study'));
+        document.getElementById('nav-sleep')?.addEventListener('click', () => switchPage('sleep'));
+        document.getElementById('nav-graph')?.addEventListener('click', () => switchPage('graph'));
+
+        // アプリケーション起動
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            initSleepUI();
+            updateHomeUI();
+            updateTimerDisplay();
+            createAquariumBubbles();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
